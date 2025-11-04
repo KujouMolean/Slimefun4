@@ -72,6 +72,7 @@ dependencies {
     compileOnly(libs.vault.api) { exclude(group = "*", module = "*") }
     compileOnly(libs.authlib) { exclude(group = "*", module = "*") }
     compileOnly("com.molean:FoliaAdapter:1.1-SNAPSHOT") { exclude(group = "*", module = "*") }
+    compileOnly("com.molean:Plugin:d343f270-20260224-123330") { exclude(group = "*", module = "*") }
 
     implementation(libs.commons.lang)
     implementation(libs.slimefun.comp.lib)

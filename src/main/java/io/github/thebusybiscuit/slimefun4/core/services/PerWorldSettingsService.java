@@ -1,5 +1,7 @@
 package io.github.thebusybiscuit.slimefun4.core.services;
 
+import com.molean.isletopia.paper.island.Island;
+import com.molean.isletopia.paper.island.IslandManager;
 import io.github.bakedlibs.dough.collections.OptionalMap;
 import io.github.bakedlibs.dough.config.Config;
 import io.github.thebusybiscuit.slimefun4.api.MinecraftVersion;
@@ -78,6 +80,12 @@ public class PerWorldSettingsService {
         Validate.notNull(world, "The world cannot be null");
         Validate.notNull(item, "The SlimefunItem cannot be null");
 
+        Island currentIsland = IslandManager.INSTANCE.getCurrentIsland(world);
+        if (currentIsland == null
+                || !currentIsland.flagEnabled(com.molean.isletopia.paper.island.flag.external.Slimefun.class)) {
+            return false;
+        }
+
         Set<String> items = disabledItems.computeIfAbsent(world.getUID(), id -> loadWorldFromConfig(world));
 
         if (disabledWorlds.contains(world.getUID())) {
@@ -138,6 +146,11 @@ public class PerWorldSettingsService {
      * @return Whether this {@link World} is enabled
      */
     public boolean isWorldEnabled(@Nonnull World world) {
+        Island currentIsland = IslandManager.INSTANCE.getCurrentIsland(world);
+        if (currentIsland == null
+                || !currentIsland.flagEnabled(com.molean.isletopia.paper.island.flag.external.Slimefun.class)) {
+            return false;
+        }
         Validate.notNull(world, "null is not a valid World");
         load(world);
 
@@ -155,6 +168,12 @@ public class PerWorldSettingsService {
      * @return Whether this addon is enabled in that {@link World}
      */
     public boolean isAddonEnabled(@Nonnull World world, @Nonnull SlimefunAddon addon) {
+        Island currentIsland = IslandManager.INSTANCE.getCurrentIsland(world);
+        if (currentIsland == null
+                || !currentIsland.flagEnabled(com.molean.isletopia.paper.island.flag.external.Slimefun.class)) {
+            return false;
+        }
+
         Validate.notNull(world, "World cannot be null");
         Validate.notNull(addon, "Addon cannot be null");
         return isWorldEnabled(world)

@@ -88,6 +88,10 @@ public class PiglinListener implements Listener {
                 // Check the getBarteringLootChance and compare against a random number 0-100,
                 // if the random number is greater then replace the item.
                 if (sfi instanceof PiglinBarterDrop piglinBarterDrop) {
+                    if (sfi.isDisabledIn(e.getEntity().getWorld())) {
+                        continue;
+                    }
+
                     int chance = piglinBarterDrop.getBarteringLootChance();
 
                     if (chance < 1 || chance >= 100) {

@@ -13,6 +13,7 @@ api-version: '1.16'
 
 depend:
   - FoliaAdapter
+  - IsletopiaPaper
 
 # (Soft) dependencies of Slimefun, we hook into these plugins.
 softdepend:

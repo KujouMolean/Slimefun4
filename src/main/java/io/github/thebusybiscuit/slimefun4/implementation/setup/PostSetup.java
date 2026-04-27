@@ -53,7 +53,7 @@ public final class PostSetup {
             }
         }
 
-        Bukkit.getPluginManager().callEvent(new SlimefunItemRegistryFinalizedEvent());
+        com.molean.folia.adapter.Folia.getPluginManager().ce(new SlimefunItemRegistryFinalizedEvent());
 
         loadOreGrinderRecipes();
         loadSmelteryRecipes();
@@ -88,6 +88,7 @@ public final class PostSetup {
         sender.sendMessage("");
         sender.sendMessage(ChatColor.GREEN + " - 源码:      https://github.com/SlimefunGuguProject/Slimefun4");
         sender.sendMessage(ChatColor.GREEN + " - Bug 反馈:  https://github.com/SlimefunGuguProject/Slimefun4/issues");
+        sender.sendMessage(ChatColor.GREEN + " - Folia 相关BUG反馈: @梓莎(QQ2719322893)");
 
         sender.sendMessage("");
 
@@ -111,7 +112,7 @@ public final class PostSetup {
     }
 
     private static void loadOreGrinderRecipes() {
-        List<ItemStack[]> grinderRecipes = new ArrayList<>();
+        List<ItemStack[]> grinderRecipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         GrindStone grinder = (GrindStone) SlimefunItems.GRIND_STONE.getItem();
         if (grinder != null) {
@@ -191,7 +192,7 @@ public final class PostSetup {
     }
 
     private static void addSmelteryRecipe(ItemStack[] input, ItemStack[] output, MakeshiftSmeltery makeshiftSmeltery) {
-        List<ItemStack> ingredients = new ArrayList<>();
+        List<ItemStack> ingredients = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         // Filter out 'null' items
         for (ItemStack item : input) {

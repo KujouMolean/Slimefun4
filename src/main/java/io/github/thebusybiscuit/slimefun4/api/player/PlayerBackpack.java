@@ -57,25 +57,23 @@ public class PlayerBackpack extends SlimefunInventoryHolder {
     @Getter
     private InvSnapshot snapshot;
 
-    public static void getAsync(ItemStack item, Consumer<PlayerBackpack> callback, boolean runCbOnMainThread) {
+    public static void getAsync(
+            ItemStack item, Consumer<PlayerBackpack> callback, com.molean.folia.adapter.SchedulerContext context) {
         if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasLore()) {
             return;
         }
-        Executor executor = runCbOnMainThread
-                ? ThreadUtils.getMainDelayedExecutor()
-                : Slimefun.getDatabaseManager().getProfileDataController().getCallbackExecutor();
         var bUuid = getBackpackUUID(item.getItemMeta());
         if (bUuid.isPresent()) {
             Slimefun.getDatabaseManager()
                     .getProfileDataController()
                     .getBackpackAsync(bUuid.get())
-                    .thenAcceptAsync(
-                            (result) -> {
-                                if (result != null) {
-                                    callback.accept(result);
-                                }
-                            },
-                            executor);
+                    .thenAcceptAsync((result) -> {
+                        context.runTask(Slimefun.instance(), () -> {
+                            if (result != null) {
+                                callback.accept(result);
+                            }
+                        });
+                    });
             return;
         }
 
@@ -98,18 +96,18 @@ public class PlayerBackpack extends SlimefunInventoryHolder {
             Slimefun.getDatabaseManager()
                     .getProfileDataController()
                     .getBackpackAsync(Bukkit.getOfflinePlayer(UUID.fromString(uuid)), number)
-                    .thenAcceptAsync(
-                            (result) -> {
-                                if (result != null) {
-                                    var meta = item.getItemMeta();
-                                    meta.getPersistentDataContainer()
-                                            .set(KEY_BACKPACK_UUID, PersistentDataType.STRING, result.uuid.toString());
-                                    item.setItemMeta(meta);
-                                    // TODO: upgrade lore
-                                    callback.accept(result);
-                                }
-                            },
-                            executor);
+                    .thenAcceptAsync((result) -> {
+                        context.runTask(Slimefun.instance(), () -> {
+                            if (result != null) {
+                                var meta = item.getItemMeta();
+                                meta.getPersistentDataContainer()
+                                        .set(KEY_BACKPACK_UUID, PersistentDataType.STRING, result.uuid.toString());
+                                item.setItemMeta(meta);
+                                // TODO: upgrade lore
+                                callback.accept(result);
+                            }
+                        });
+                    });
         }
     }
 

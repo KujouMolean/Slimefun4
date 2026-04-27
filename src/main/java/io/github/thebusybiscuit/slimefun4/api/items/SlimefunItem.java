@@ -110,8 +110,9 @@ public class SlimefunItem implements Placeable {
 
     private Optional<String> wikiURL = Optional.empty();
 
-    private final OptionalMap<Class<? extends ItemHandler>, ItemHandler> itemHandlers = new OptionalMap<>(HashMap::new);
-    private final Set<ItemSetting<?>> itemSettings = new HashSet<>();
+    private final OptionalMap<Class<? extends ItemHandler>, ItemHandler> itemHandlers =
+            new OptionalMap<>(() -> java.util.Collections.synchronizedMap(new HashMap<>()));
+    private final Set<ItemSetting<?>> itemSettings = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     private boolean ticking = false;
     private BlockTicker blockTicker;
@@ -494,7 +495,7 @@ public class SlimefunItem implements Placeable {
 
             // handle runtime-registrations / auto-loading
             if (Slimefun.getConfigManager().isAutoLoadingEnabled() && state == ItemState.ENABLED) {
-                info("Item was registered during runtime.");
+                //                info("Item was registered during runtime.");
                 load();
             }
         } catch (Exception x) {

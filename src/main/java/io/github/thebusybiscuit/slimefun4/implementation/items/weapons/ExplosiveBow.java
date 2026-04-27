@@ -66,7 +66,7 @@ public class ExplosiveBow extends SlimefunBow {
                 if (!entity.getUniqueId().equals(target.getUniqueId())) {
                     EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(
                             e.getDamager(), entity, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, damage);
-                    Bukkit.getPluginManager().callEvent(event);
+                    com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
                     if (!event.isCancelled()) {
                         distanceVector.setY(0.75);

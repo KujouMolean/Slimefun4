@@ -18,12 +18,12 @@ class ContributionsConnector extends GitHubConnector {
      * GitHub Bots that do not count as Contributors
      * (includes "invalid-email-address" because it is an invalid contributor)
      */
-    private final List<String> ignoredAccounts = new ArrayList<>();
+    private final List<String> ignoredAccounts = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     /**
      * Matches a GitHub name with a Minecraft name.
      */
-    private final Map<String, String> aliases = new HashMap<>();
+    private final Map<String, String> aliases = java.util.Collections.synchronizedMap(new HashMap<>());
 
     private final String prefix;
     private final String role;
@@ -115,7 +115,7 @@ class ContributionsConnector extends GitHubConnector {
 
     @Override
     public Map<String, Object> getParameters() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Object> parameters = java.util.Collections.synchronizedMap(new HashMap<>());
         parameters.put("per_page", 100);
         parameters.put("page", page);
         return parameters;

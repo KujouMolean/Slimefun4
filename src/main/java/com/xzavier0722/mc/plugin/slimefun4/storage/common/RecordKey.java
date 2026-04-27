@@ -18,7 +18,7 @@ public class RecordKey extends ScopeKey {
 
     @ParametersAreNonnullByDefault
     public RecordKey(DataScope scope) {
-        this(scope, new HashSet<>());
+        this(scope, new java.util.concurrent.CopyOnWriteArraySet<>());
     }
 
     @ParametersAreNonnullByDefault

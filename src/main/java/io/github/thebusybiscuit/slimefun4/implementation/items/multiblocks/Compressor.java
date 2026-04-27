@@ -80,7 +80,7 @@ public class Compressor extends MultiBlockMachine {
                         Inventory outputInv = findOutputInventory(output, dispBlock, inv);
                         MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, item, output);
 
-                        Bukkit.getPluginManager().callEvent(event);
+                        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                         if (event.isCancelled()) {
                             return;
                         }
@@ -109,7 +109,7 @@ public class Compressor extends MultiBlockMachine {
         for (int i = 0; i < 4; i++) {
             int j = i;
 
-            Slimefun.runSync(
+            com.molean.folia.adapter.Folia.runSync(
                     () -> {
                         if (j < 3) {
                             if (j == 1) {
@@ -121,6 +121,7 @@ public class Compressor extends MultiBlockMachine {
                             handleCraftedItem(output, dispenser, dispInv);
                         }
                     },
+                    p,
                     i * 20L);
         }
     }

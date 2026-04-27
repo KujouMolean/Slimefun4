@@ -47,7 +47,7 @@ import org.bukkit.inventory.ItemStack;
 public class ProduceCollector extends AContainer implements RecipeDisplayItem {
 
     private final ItemSetting<Integer> range = new IntRangeSetting(this, "range", 1, 2, 32);
-    private final Set<AnimalProduce> animalProduces = new HashSet<>();
+    private final Set<AnimalProduce> animalProduces = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     @ParametersAreNonnullByDefault
     public ProduceCollector(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
@@ -110,7 +110,7 @@ public class ProduceCollector extends AContainer implements RecipeDisplayItem {
 
     @Override
     public @Nonnull List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> displayRecipes = new ArrayList<>();
+        List<ItemStack> displayRecipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         displayRecipes.add(new CustomItemStack(Material.BUCKET, null, "&f需要附近有 &b牛 &f才会生产"));
         displayRecipes.add(new ItemStack(Material.MILK_BUCKET));

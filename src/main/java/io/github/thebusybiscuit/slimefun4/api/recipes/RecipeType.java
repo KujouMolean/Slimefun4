@@ -272,18 +272,20 @@ public class RecipeType implements Keyed {
                 .toUpperCase(Locale.ROOT)
                 .replace(' ', '_');
         EntityType entity = EntityType.valueOf(mob);
-        Set<ItemStack> dropping = Slimefun.getRegistry().getMobDrops().getOrDefault(entity, new HashSet<>());
+        Set<ItemStack> dropping = Slimefun.getRegistry()
+                .getMobDrops()
+                .getOrDefault(entity, new java.util.concurrent.CopyOnWriteArraySet<>());
         dropping.add(output);
         Slimefun.getRegistry().getMobDrops().put(entity, dropping);
     }
 
     public static List<ItemStack> getRecipeInputs(MultiBlockMachine machine) {
         if (machine == null) {
-            return new ArrayList<>();
+            return new java.util.concurrent.CopyOnWriteArrayList<>();
         }
 
         List<ItemStack[]> recipes = machine.getRecipes();
-        List<ItemStack> convertible = new ArrayList<>();
+        List<ItemStack> convertible = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (int i = 0; i < recipes.size(); i++) {
             if (i % 2 == 0) {
@@ -296,11 +298,11 @@ public class RecipeType implements Keyed {
 
     public static List<ItemStack[]> getRecipeInputList(MultiBlockMachine machine) {
         if (machine == null) {
-            return new ArrayList<>();
+            return new java.util.concurrent.CopyOnWriteArrayList<>();
         }
 
         List<ItemStack[]> recipes = machine.getRecipes();
-        List<ItemStack[]> convertible = new ArrayList<>();
+        List<ItemStack[]> convertible = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (int i = 0; i < recipes.size(); i++) {
             if (i % 2 == 0) {

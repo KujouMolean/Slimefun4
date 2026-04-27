@@ -7967,7 +7967,7 @@ public final class SlimefunItemSetup {
             PotionEffect[][] effects,
             SlimefunAddon addon) {
         String[] components = new String[] {"_HELMET", "_CHESTPLATE", "_LEGGINGS", "_BOOTS"};
-        List<ItemStack[]> recipes = new ArrayList<>();
+        List<ItemStack[]> recipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         recipes.add(new ItemStack[] {
             baseComponent, baseComponent, baseComponent, baseComponent, null, baseComponent, null, null, null

@@ -42,7 +42,7 @@ public final class SlimefunGuideSettings {
         1, 3, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48,
         50, 52, 53
     };
-    private static final List<SlimefunGuideOption<?>> options = new ArrayList<>();
+    private static final List<SlimefunGuideOption<?>> options = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     static {
         options.add(new GuideModeOption());
@@ -93,7 +93,7 @@ public final class SlimefunGuideSettings {
 
         GitHubService github = Slimefun.getGitHubService();
 
-        List<String> contributorsLore = new ArrayList<>();
+        List<String> contributorsLore = new java.util.concurrent.CopyOnWriteArrayList<>();
         contributorsLore.add("");
         contributorsLore.addAll(locale.getMessages(
                 p,

@@ -31,11 +31,12 @@ public class AsyncRecipeChoiceTask implements Runnable {
 
     private static final int UPDATE_INTERVAL = 14;
 
-    private final Map<Integer, LoopIterator<Material>> iterators = new HashMap<>();
+    private final Map<Integer, LoopIterator<Material>> iterators =
+            java.util.Collections.synchronizedMap(new HashMap<>());
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     private Inventory inventory;
-    private int id;
+    private io.papermc.paper.threadedregions.scheduler.ScheduledTask id;
 
     /**
      * This will start this task for the given {@link Inventory}.
@@ -47,9 +48,8 @@ public class AsyncRecipeChoiceTask implements Runnable {
         Validate.notNull(inv, "Inventory must not be null");
 
         inventory = inv;
-        id = Bukkit.getScheduler()
-                .runTaskTimerAsynchronously(Slimefun.instance(), this, 0, UPDATE_INTERVAL)
-                .getTaskId();
+        id = com.molean.folia.adapter.Folia.getScheduler()
+                .runTaskTimerAsynchronously(Slimefun.instance(), this, 0, UPDATE_INTERVAL);
     }
 
     public void add(int slot, @Nonnull MaterialChoice choice) {
@@ -109,7 +109,7 @@ public class AsyncRecipeChoiceTask implements Runnable {
     public void run() {
         // Terminate the task when noone is viewing the Inventory
         if (inventory.getViewers().isEmpty()) {
-            Bukkit.getScheduler().cancelTask(id);
+            id.cancel();
             return;
         }
 

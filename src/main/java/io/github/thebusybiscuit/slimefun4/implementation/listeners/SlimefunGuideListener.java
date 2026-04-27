@@ -72,7 +72,7 @@ public class SlimefunGuideListener implements Listener {
     @ParametersAreNonnullByDefault
     private void openGuide(Player p, PlayerRightClickEvent e, SlimefunGuideMode layout) {
         SlimefunGuideOpenEvent event = new SlimefunGuideOpenEvent(p, e.getItem(), layout);
-        Bukkit.getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
         if (!event.isCancelled()) {
             e.cancel();

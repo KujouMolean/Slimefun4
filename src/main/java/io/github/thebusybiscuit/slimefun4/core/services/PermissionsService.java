@@ -26,7 +26,7 @@ import org.bukkit.permissions.Permission;
  */
 public class PermissionsService {
 
-    private final Map<String, String> permissions = new HashMap<>();
+    private final Map<String, String> permissions = java.util.Collections.synchronizedMap(new HashMap<>());
     private final Config config;
 
     public PermissionsService(@Nonnull Slimefun plugin) {

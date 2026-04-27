@@ -56,8 +56,8 @@ public abstract class MultiBlockMachine extends SlimefunItem implements NotPlace
             ItemStack[] machineRecipes,
             BlockFace trigger) {
         super(itemGroup, item, RecipeType.MULTIBLOCK, recipe);
-        this.recipes = new ArrayList<>();
-        this.displayRecipes = new ArrayList<>();
+        this.recipes = new java.util.concurrent.CopyOnWriteArrayList<>();
+        this.displayRecipes = new java.util.concurrent.CopyOnWriteArrayList<>();
         this.displayRecipes.addAll(Arrays.asList(machineRecipes));
         this.multiblock = new MultiBlock(this, convertItemStacksToMaterial(recipe), trigger);
 
@@ -219,7 +219,7 @@ public abstract class MultiBlockMachine extends SlimefunItem implements NotPlace
     }
 
     private static @Nonnull Material[] convertItemStacksToMaterial(@Nonnull ItemStack[] items) {
-        List<Material> materials = new ArrayList<>();
+        List<Material> materials = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (ItemStack item : items) {
             if (item == null) {

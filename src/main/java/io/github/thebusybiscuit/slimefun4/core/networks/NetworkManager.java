@@ -46,7 +46,7 @@ public class NetworkManager {
      * Therefore a {@link CopyOnWriteArrayList} should be perfect for this, even
      * if insertions come at a slight cost.
      */
-    private final List<Network> networks = new CopyOnWriteArrayList<>();
+    private final List<Network> networks = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     /**
      * This creates a new {@link NetworkManager} with the given capacity.

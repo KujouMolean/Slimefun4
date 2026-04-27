@@ -82,7 +82,7 @@ public abstract class Reactor extends AbstractEnergyProvider
     // No coolant border
     private static final int[] border_4 = {25, 34, 43};
 
-    private final Set<Location> explosionsQueue = new HashSet<>();
+    private final Set<Location> explosionsQueue = new java.util.concurrent.CopyOnWriteArraySet<>();
     private final MachineProcessor<FuelOperation> processor = new MachineProcessor<>(this);
 
     @ParametersAreNonnullByDefault
@@ -398,13 +398,15 @@ public abstract class Reactor extends AbstractEnergyProvider
         boolean explosion = explosionsQueue.contains(l);
 
         if (explosion) {
-            Slimefun.runSync(() -> {
-                ReactorExplodeEvent event = new ReactorExplodeEvent(l, Reactor.this);
-                Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.runSync(
+                    () -> {
+                        ReactorExplodeEvent event = new ReactorExplodeEvent(l, Reactor.this);
+                        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
-                ((SlimefunBlockData) data).getBlockMenu().close();
-                removeHologram(l.getBlock());
-            });
+                        ((SlimefunBlockData) data).getBlockMenu().close();
+                        removeHologram(l.getBlock());
+                    },
+                    l);
 
             explosionsQueue.remove(l);
             processor.endOperation(l);
@@ -414,18 +416,20 @@ public abstract class Reactor extends AbstractEnergyProvider
     }
 
     private void checkForWaterBlocks(Location l) {
-        Slimefun.runSync(() -> {
-            /*
-             * We will pick a surrounding block at random and see if this is water.
-             * If it isn't, then we will make it explode.
-             */
-            int index = ThreadLocalRandom.current().nextInt(WATER_BLOCKS.length);
-            BlockFace randomNeighbour = WATER_BLOCKS[index];
+        com.molean.folia.adapter.Folia.runSync(
+                () -> {
+                    /*
+                     * We will pick a surrounding block at random and see if this is water.
+                     * If it isn't, then we will make it explode.
+                     */
+                    int index = ThreadLocalRandom.current().nextInt(WATER_BLOCKS.length);
+                    BlockFace randomNeighbour = WATER_BLOCKS[index];
 
-            if (l.getBlock().getRelative(randomNeighbour).getType() != Material.WATER) {
-                explosionsQueue.add(l);
-            }
-        });
+                    if (l.getBlock().getRelative(randomNeighbour).getType() != Material.WATER) {
+                        explosionsQueue.add(l);
+                    }
+                },
+                l);
     }
 
     private void createByproduct(
@@ -453,7 +457,7 @@ public abstract class Reactor extends AbstractEnergyProvider
     }
 
     private void burnNextFuel(Location l, BlockMenu inv, BlockMenu accessPort) {
-        Map<Integer, Integer> found = new HashMap<>();
+        Map<Integer, Integer> found = java.util.Collections.synchronizedMap(new HashMap<>());
         MachineFuel fuel = findFuel(inv, found);
 
         if (accessPort != null) {
@@ -562,7 +566,8 @@ public abstract class Reactor extends AbstractEnergyProvider
         }
 
         if (!port.isDataLoaded()) {
-            StorageCacheUtils.executeAfterLoad(port, () -> updateInventory(menu, l.getBlock()), false);
+            StorageCacheUtils.executeAfterLoad(
+                    port, () -> updateInventory(menu, l.getBlock()), com.molean.folia.adapter.SchedulerContext.of(l));
             return null;
         }
 

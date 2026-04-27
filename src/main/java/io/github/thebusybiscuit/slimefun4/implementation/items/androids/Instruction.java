@@ -242,7 +242,7 @@ public enum Instruction {
         android.refuel(inv, target);
     });
 
-    private static final Map<String, Instruction> nameLookup = new HashMap<>();
+    private static final Map<String, Instruction> nameLookup = java.util.Collections.synchronizedMap(new HashMap<>());
     public static final Instruction[] valuesCache = values();
 
     static {

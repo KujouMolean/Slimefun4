@@ -19,7 +19,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public abstract class MedicalSupply<T extends ItemHandler> extends SimpleSlimefunItem<T> {
 
-    private final Set<PotionEffectType> curedEffects = new HashSet<>();
+    private final Set<PotionEffectType> curedEffects = new java.util.concurrent.CopyOnWriteArraySet<>();
     private final int healAmount;
 
     @ParametersAreNonnullByDefault

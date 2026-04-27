@@ -13,7 +13,7 @@ public class PlayerChatCatcher {
     private final Map<UUID, Consumer<String>> catchers;
 
     public PlayerChatCatcher(Slimefun plugin) {
-        catchers = new HashMap<>();
+        catchers = java.util.Collections.synchronizedMap(new HashMap<>());
         Bukkit.getPluginManager().registerEvents(new PlayerChatListener(), plugin);
     }
 

@@ -191,7 +191,7 @@ public final class SlimefunUtils {
             container.remove(key);
         }
 
-        List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
+        List<String> lore = meta.hasLore() ? meta.getLore() : new java.util.concurrent.CopyOnWriteArrayList<>();
 
         if (makeSoulbound && !isSoulbound) {
             lore.add(SOULBOUND_LORE);
@@ -591,7 +591,7 @@ public final class SlimefunUtils {
 
     public static void updateCapacitorTexture(@Nonnull Location l, double percentage) {
 
-        Slimefun.runSync(new CapacitorTextureUpdateTask(l, percentage));
+        com.molean.folia.adapter.Folia.runSync(new CapacitorTextureUpdateTask(l, percentage), l);
     }
 
     /**
@@ -643,7 +643,7 @@ public final class SlimefunUtils {
     public static @Nullable Item spawnItem(
             Location loc, ItemStack item, ItemSpawnReason reason, boolean addRandomOffset, @Nullable Player player) {
         SlimefunItemSpawnEvent event = new SlimefunItemSpawnEvent(player, loc, item, reason);
-        Slimefun.instance().getServer().getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
         if (!event.isCancelled()) {
             World world = event.getLocation().getWorld();

@@ -12,23 +12,25 @@ import org.bukkit.Bukkit;
 @UtilityClass
 public class TaskUtil {
     @SneakyThrows
-    public void runSyncMethod(Runnable runnable) {
-        if (Bukkit.isPrimaryThread()) {
-            runnable.run();
-        } else {
-            Slimefun.runSync(runnable);
-        }
+    public void runSyncMethod(Runnable runnable, com.molean.folia.adapter.SchedulerContext context) {
+        context.runTask(Slimefun.instance(), runnable);
     }
 
     @SneakyThrows
-    public <T> T runSyncMethod(Callable<T> callable) {
+    public <T> T runSyncMethod(Callable<T> callable, com.molean.folia.adapter.SchedulerContext context) {
         if (Bukkit.isPrimaryThread()) {
             return callable.call();
         } else {
             try {
-                return Bukkit.getScheduler()
-                        .callSyncMethod(Slimefun.instance(), callable)
-                        .get(1, TimeUnit.SECONDS);
+                java.util.concurrent.CompletableFuture<T> future = new java.util.concurrent.CompletableFuture<>();
+                context.runTask(Slimefun.instance(), () -> {
+                    try {
+                        future.complete(callable.call());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                return future.get(1, TimeUnit.SECONDS);
             } catch (TimeoutException e) {
                 Slimefun.logger().log(Level.WARNING, "Timeout when executing sync method", e);
                 return null;

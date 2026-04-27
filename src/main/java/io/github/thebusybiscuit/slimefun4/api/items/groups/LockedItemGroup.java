@@ -32,7 +32,7 @@ import org.bukkit.inventory.ItemStack;
 public class LockedItemGroup extends ItemGroup {
 
     private final NamespacedKey[] keys;
-    private final Set<ItemGroup> parents = new HashSet<>();
+    private final Set<ItemGroup> parents = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     /**
      * The basic constructor for a LockedItemGroup.
@@ -76,7 +76,7 @@ public class LockedItemGroup extends ItemGroup {
     public void register(@Nonnull SlimefunAddon addon) {
         super.register(addon);
 
-        List<NamespacedKey> namespacedKeys = new ArrayList<>();
+        List<NamespacedKey> namespacedKeys = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (NamespacedKey key : keys) {
             if (key != null) {

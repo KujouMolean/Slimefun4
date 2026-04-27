@@ -28,6 +28,7 @@ tasks.compileJava {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots")
     maven("https://repo.papermc.io/repository/maven-public/")
@@ -52,7 +53,9 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
 
-    implementation(libs.dough.api)
+    implementation(libs.dough.api) {
+        exclude(group = "com.molean", module = "FoliaAdapter")
+    }
     implementation(libs.unirest.java) {
         exclude(group = "com.google.code.gson", module = "gson")
     }
@@ -68,6 +71,7 @@ dependencies {
     compileOnly(libs.orebfuscator.api) { exclude(group = "*", module = "*") }
     compileOnly(libs.vault.api) { exclude(group = "*", module = "*") }
     compileOnly(libs.authlib) { exclude(group = "*", module = "*") }
+    compileOnly("com.molean:FoliaAdapter:1.1-SNAPSHOT") { exclude(group = "*", module = "*") }
 
     implementation(libs.commons.lang)
     implementation(libs.slimefun.comp.lib)
@@ -92,13 +96,13 @@ tasks.test {
     }
 }
 
-spotless {
-    java {
-        palantirJavaFormat("2.90.0").style("PALANTIR")
-        removeUnusedImports()
-        formatAnnotations()
-    }
-}
+//spotless {
+//    java {
+//        palantirJavaFormat("2.90.0").style("PALANTIR")
+//        removeUnusedImports()
+//        formatAnnotations()
+//    }
+//}
 
 val buildVersion = version.toString()
 val gitBuildTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))

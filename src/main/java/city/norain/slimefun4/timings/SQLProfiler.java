@@ -33,17 +33,16 @@ public class SQLProfiler {
     @Getter
     private volatile boolean isProfiling = false;
 
-    private final Map<TimingEntry, Long> samplingEntries = new HashMap<>();
+    private final Map<TimingEntry, Long> samplingEntries = java.util.Collections.synchronizedMap(new HashMap<>());
 
-    private final Map<TimingEntry, Long> entries = new HashMap<>();
+    private final Map<TimingEntry, Long> entries = java.util.Collections.synchronizedMap(new HashMap<>());
 
-    private final Set<CommandSender> subscribers = new HashSet<>();
+    private final Set<CommandSender> subscribers = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     private long startTime = -1L;
 
     public void initSlowSqlCheck(@Nonnull Slimefun plugin) {
-        plugin.getServer()
-                .getScheduler()
+        com.molean.folia.adapter.Folia.getScheduler()
                 .runTaskTimerAsynchronously(plugin, new SlowSqlCheckTask(() -> samplingEntries), 20L, 20L);
     }
 

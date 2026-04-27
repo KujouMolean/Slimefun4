@@ -66,7 +66,7 @@ public class AutomatedPanningMachine extends MultiBlockMachine {
 
     @Override
     public @Nonnull List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> recipes = new ArrayList<>();
+        List<ItemStack> recipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         recipes.addAll(goldPan.getDisplayRecipes());
         recipes.addAll(netherGoldPan.getDisplayRecipes());
@@ -91,7 +91,7 @@ public class AutomatedPanningMachine extends MultiBlockMachine {
 
         MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, input, output);
 
-        Bukkit.getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
         if (event.isCancelled()) {
             return;
         }
@@ -112,24 +112,28 @@ public class AutomatedPanningMachine extends MultiBlockMachine {
         queue.thenRepeatEvery(
                 20,
                 5,
-                () -> b.getWorld()
-                        .playEffect(b.getRelative(BlockFace.DOWN).getLocation(), Effect.STEP_SOUND, material));
-        queue.thenRun(20, () -> {
-            if (finalOutput.getType() != Material.AIR) {
-                Optional<Inventory> outputChest = OutputChest.findOutputChestFor(b.getRelative(BlockFace.DOWN), output);
+                () -> b.getWorld().playEffect(b.getRelative(BlockFace.DOWN).getLocation(), Effect.STEP_SOUND, material),
+                com.molean.folia.adapter.SchedulerContext.of(b.getLocation()));
+        queue.thenRun(
+                20,
+                () -> {
+                    if (finalOutput.getType() != Material.AIR) {
+                        Optional<Inventory> outputChest =
+                                OutputChest.findOutputChestFor(b.getRelative(BlockFace.DOWN), output);
 
-                if (outputChest.isPresent()) {
-                    Slimefun.getItemStackService()
-                            .addItem(outputChest.get(), finalOutput.clone(), InventoryContext.OUTPUT_CHEST);
-                } else {
-                    b.getWorld().dropItemNaturally(b.getLocation(), finalOutput.clone());
-                }
+                        if (outputChest.isPresent()) {
+                            Slimefun.getItemStackService()
+                                    .addItem(outputChest.get(), finalOutput.clone(), InventoryContext.OUTPUT_CHEST);
+                        } else {
+                            b.getWorld().dropItemNaturally(b.getLocation(), finalOutput.clone());
+                        }
 
-                SoundEffect.AUTOMATED_PANNING_MACHINE_SUCCESS_SOUND.playAt(b);
-            } else {
-                SoundEffect.AUTOMATED_PANNING_MACHINE_FAIL_SOUND.playAt(b);
-            }
-        });
+                        SoundEffect.AUTOMATED_PANNING_MACHINE_SUCCESS_SOUND.playAt(b);
+                    } else {
+                        SoundEffect.AUTOMATED_PANNING_MACHINE_FAIL_SOUND.playAt(b);
+                    }
+                },
+                com.molean.folia.adapter.SchedulerContext.of(b.getLocation()));
 
         queue.execute(Slimefun.instance());
     }

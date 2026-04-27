@@ -49,7 +49,7 @@ abstract class AbstractSmeltery extends MultiBlockMachine {
                             RecipeType.getRecipeOutputList(this, inputs.get(i)).clone();
                     MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, inputs.get(i), output);
 
-                    Bukkit.getPluginManager().callEvent(event);
+                    com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                     if (!event.isCancelled() && SlimefunUtils.canPlayerUseItem(p, output, true)) {
                         Inventory outputInv = findOutputInventory(output, possibleDispenser, inv);
 

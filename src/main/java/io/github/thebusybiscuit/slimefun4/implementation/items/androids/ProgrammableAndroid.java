@@ -985,8 +985,9 @@ public class ProgrammableAndroid extends SlimefunItem
     public void addItems(Block b, ItemStack... items) {
         Validate.notNull(b, "The Block cannot be null.");
 
-        Optional<UUID> uuid =
-                TaskUtil.runSyncMethod(() -> Slimefun.getBlockDataService().getUniversalDataUUID(b));
+        Optional<UUID> uuid = TaskUtil.runSyncMethod(
+                () -> Slimefun.getBlockDataService().getUniversalDataUUID(b),
+                com.molean.folia.adapter.SchedulerContext.of(b.getLocation()));
 
         if (uuid.isEmpty()) {
             throw new IllegalStateException("Android missing uuid");
@@ -1042,14 +1043,16 @@ public class ProgrammableAndroid extends SlimefunItem
 
             Slimefun.getDatabaseManager().getBlockDataController().move(uniData, to.getLocation());
 
-            Slimefun.runSync(() -> {
-                PlayerSkin skin = PlayerSkin.fromBase64(texture);
-                Material type = to.getType();
-                // Ensure that this Block is still a Player Head
-                if (type == Material.PLAYER_HEAD || type == Material.PLAYER_WALL_HEAD) {
-                    PlayerHead.setSkin(to, skin, true);
-                }
-            });
+            com.molean.folia.adapter.Folia.runSync(
+                    () -> {
+                        PlayerSkin skin = PlayerSkin.fromBase64(texture);
+                        Material type = to.getType();
+                        // Ensure that this Block is still a Player Head
+                        if (type == Material.PLAYER_HEAD || type == Material.PLAYER_WALL_HEAD) {
+                            PlayerHead.setSkin(to, skin, true);
+                        }
+                    },
+                    to.getLocation());
 
             from.setType(Material.AIR);
         }

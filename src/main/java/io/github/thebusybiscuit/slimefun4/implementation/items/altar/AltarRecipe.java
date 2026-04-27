@@ -12,7 +12,7 @@ public class AltarRecipe {
 
     public AltarRecipe(List<ItemStack> input, ItemStack output) {
         this.catalyst = input.get(4);
-        this.input = new ArrayList<>();
+        this.input = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         this.input.add(input.get(0));
         this.input.add(input.get(1));

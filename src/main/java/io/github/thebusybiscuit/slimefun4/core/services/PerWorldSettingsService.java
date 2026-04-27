@@ -31,9 +31,11 @@ public class PerWorldSettingsService {
 
     private final Slimefun plugin;
 
-    private final OptionalMap<UUID, Set<String>> disabledItems = new OptionalMap<>(HashMap::new);
-    private final Map<SlimefunAddon, Set<String>> disabledAddons = new HashMap<>();
-    private final Set<UUID> disabledWorlds = new HashSet<>();
+    private final OptionalMap<UUID, Set<String>> disabledItems =
+            new OptionalMap<>(() -> java.util.Collections.synchronizedMap(new HashMap<>()));
+    private final Map<SlimefunAddon, Set<String>> disabledAddons =
+            java.util.Collections.synchronizedMap(new HashMap<>());
+    private final Set<UUID> disabledWorlds = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     public PerWorldSettingsService(@Nonnull Slimefun plugin) {
         this.plugin = plugin;
@@ -238,7 +240,8 @@ public class PerWorldSettingsService {
                 boolean isAddonDisabled = config.getBoolean(addon + ".enabled");
 
                 if (isAddonDisabled) {
-                    Set<String> blacklist = disabledAddons.computeIfAbsent(plugin, key -> new HashSet<>());
+                    Set<String> blacklist = disabledAddons.computeIfAbsent(
+                            plugin, key -> new java.util.concurrent.CopyOnWriteArraySet<>());
                     blacklist.add(worldName);
                 }
 

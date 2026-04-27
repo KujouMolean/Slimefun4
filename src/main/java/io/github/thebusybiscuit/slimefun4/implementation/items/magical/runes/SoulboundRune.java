@@ -52,7 +52,7 @@ public class SoulboundRune extends SimpleSlimefunItem<ItemDropHandler> {
                     return true;
                 }
 
-                Slimefun.runSync(() -> activate(p, item), 20L);
+                com.molean.folia.adapter.Folia.runSync(() -> activate(p, item), p, 20L);
 
                 return true;
             }
@@ -78,7 +78,7 @@ public class SoulboundRune extends SimpleSlimefunItem<ItemDropHandler> {
                 // This lightning is just an effect, it deals no damage.
                 l.getWorld().strikeLightningEffect(l);
 
-                Slimefun.runSync(
+                com.molean.folia.adapter.Folia.runSync(
                         () -> {
                             // Being sure entities are still valid and not picked up or whatsoever.
                             if (rune.isValid() && item.isValid() && itemStack.getAmount() == 1) {
@@ -97,6 +97,7 @@ public class SoulboundRune extends SimpleSlimefunItem<ItemDropHandler> {
                                 Slimefun.getLocalization().sendMessage(p, "messages.soulbound-rune.fail", true);
                             }
                         },
+                        p,
                         10L);
             } else {
                 Slimefun.getLocalization().sendMessage(p, "messages.soulbound-rune.fail", true);

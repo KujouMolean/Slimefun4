@@ -190,7 +190,7 @@ public final class AndroidShareMenu {
         String replacedText = value.replace("[", "").replace("]", "");
 
         if (replacedText.isEmpty()) {
-            return new ArrayList<>();
+            return new java.util.concurrent.CopyOnWriteArrayList<>();
         } else {
             return new ArrayList<>(Arrays.asList(replacedText.split(", ")));
         }
@@ -209,7 +209,7 @@ public final class AndroidShareMenu {
 
         // Checks for old Android
         if (!trustUsers.isPresent()) {
-            List<String> emptyUsers = new ArrayList<>();
+            List<String> emptyUsers = new java.util.concurrent.CopyOnWriteArrayList<>();
             setSharedUserData(b.getState(), String.valueOf(emptyUsers));
             return emptyUsers;
         }

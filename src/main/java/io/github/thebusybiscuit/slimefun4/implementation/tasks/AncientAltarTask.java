@@ -51,7 +51,7 @@ public class AncientAltarTask implements Runnable {
     private final List<ItemStack> items;
 
     private final Collection<Location> particleLocations = new LinkedList<>();
-    private final Map<Item, Location> positionLock = new HashMap<>();
+    private final Map<Item, Location> positionLock = java.util.Collections.synchronizedMap(new HashMap<>());
 
     private boolean running;
     private int stage;
@@ -107,7 +107,7 @@ public class AncientAltarTask implements Runnable {
         }
 
         this.stage += 1;
-        Slimefun.runSync(this, stepDelay);
+        com.molean.folia.adapter.Folia.runSync(this, altar.getLocation(), stepDelay);
     }
 
     private boolean checkLockedItems() {
@@ -179,7 +179,7 @@ public class AncientAltarTask implements Runnable {
         if (running) {
 
             AncientAltarCraftEvent event = new AncientAltarCraftEvent(output, altar, player);
-            Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
             if (!event.isCancelled()) {
                 SoundEffect.ANCIENT_ALTAR_FINISH_SOUND.playAt(dropLocation, SoundCategory.BLOCKS);

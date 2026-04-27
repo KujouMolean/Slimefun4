@@ -134,7 +134,7 @@ public class MetricsService {
             String version = metricsClass.getPackage().getImplementationVersion();
 
             // This is required to be sync due to bStats.
-            Slimefun.runSync(() -> {
+            com.molean.folia.adapter.Folia.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
                     start.invoke(null);
                     plugin.getLogger().info("Metrics build #" + version + " started.");

@@ -43,9 +43,9 @@ public class EnergyNet extends Network implements HologramOwner {
 
     private static final int RANGE = 6;
 
-    private final Map<Location, EnergyNetProvider> generators = new HashMap<>();
-    private final Map<Location, EnergyNetComponent> capacitors = new HashMap<>();
-    private final Map<Location, EnergyNetComponent> consumers = new HashMap<>();
+    private final Map<Location, EnergyNetProvider> generators = java.util.Collections.synchronizedMap(new HashMap<>());
+    private final Map<Location, EnergyNetComponent> capacitors = java.util.Collections.synchronizedMap(new HashMap<>());
+    private final Map<Location, EnergyNetComponent> consumers = java.util.Collections.synchronizedMap(new HashMap<>());
 
     protected EnergyNet(@Nonnull Location l) {
         super(Slimefun.getNetworkManager(), l);
@@ -264,7 +264,7 @@ public class EnergyNet extends Network implements HologramOwner {
     }
 
     private long tickAllGenerators(@Nonnull LongConsumer timings) {
-        Set<Location> explodedBlocks = new HashSet<>();
+        Set<Location> explodedBlocks = new java.util.concurrent.CopyOnWriteArraySet<>();
         long supply = 0;
 
         for (Map.Entry<Location, EnergyNetProvider> entry : generators.entrySet()) {
@@ -303,10 +303,12 @@ public class EnergyNet extends Network implements HologramOwner {
                     explodedBlocks.add(loc);
                     Slimefun.getDatabaseManager().getBlockDataController().removeBlock(loc);
 
-                    Slimefun.runSync(() -> {
-                        loc.getBlock().setType(Material.LAVA);
-                        loc.getWorld().createExplosion(loc, 0F, false);
-                    });
+                    com.molean.folia.adapter.Folia.runSync(
+                            () -> {
+                                loc.getBlock().setType(Material.LAVA);
+                                loc.getWorld().createExplosion(loc, 0F, false);
+                            },
+                            loc);
                 } else {
                     supply = NumberUtils.flowSafeAddition(supply, energy);
                 }

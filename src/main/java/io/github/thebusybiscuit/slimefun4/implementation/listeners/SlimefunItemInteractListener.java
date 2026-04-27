@@ -64,7 +64,7 @@ public class SlimefunItemInteractListener implements Listener {
 
             // Fire our custom Event
             PlayerRightClickEvent event = new PlayerRightClickEvent(e);
-            Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
             boolean itemUsed = e.getHand() == EquipmentSlot.OFF_HAND;
 
@@ -157,9 +157,10 @@ public class SlimefunItemInteractListener implements Listener {
                         Slimefun.getDatabaseManager()
                                 .getBlockDataController()
                                 .loadBlockDataAsync(blockData, new IAsyncReadCallback<>() {
+
                                     @Override
-                                    public boolean runOnMainThread() {
-                                        return true;
+                                    public com.molean.folia.adapter.SchedulerContext getContext() {
+                                        return com.molean.folia.adapter.SchedulerContext.of(p);
                                     }
 
                                     @Override
@@ -196,8 +197,8 @@ public class SlimefunItemInteractListener implements Listener {
                                 .getBlockDataController()
                                 .loadUniversalDataAsync(uniData, new IAsyncReadCallback<>() {
                                     @Override
-                                    public boolean runOnMainThread() {
-                                        return true;
+                                    public com.molean.folia.adapter.SchedulerContext getContext() {
+                                        return com.molean.folia.adapter.SchedulerContext.of(p);
                                     }
 
                                     @Override

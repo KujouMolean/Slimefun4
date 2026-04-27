@@ -32,7 +32,7 @@ public class MultiTool extends SlimefunItem implements Rechargeable {
 
     private static final float COST = 0.3F;
     private final NamespacedKey multiToolMode = new NamespacedKey(Slimefun.instance(), "MULTI_TOOL_MODE");
-    private final List<MultiToolMode> modes = new ArrayList<>();
+    private final List<MultiToolMode> modes = new java.util.concurrent.CopyOnWriteArrayList<>();
     private final float capacity;
 
     @ParametersAreNonnullByDefault

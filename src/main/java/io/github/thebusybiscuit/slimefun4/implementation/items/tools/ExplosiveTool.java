@@ -78,11 +78,11 @@ public class ExplosiveTool extends SimpleSlimefunItem<ToolUseHandler> implements
     @ParametersAreNonnullByDefault
     private void breakBlocks(
             BlockBreakEvent e, Player p, ItemStack item, Block b, List<Block> blocks, List<ItemStack> drops) {
-        List<Block> blocksToDestroy = new ArrayList<>();
+        List<Block> blocksToDestroy = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         if (callExplosionEvent.getValue()) {
             BlockExplodeEvent blockExplodeEvent = VersionedEvent.newBlockExplodeEvent(b, blocks, 0);
-            Bukkit.getServer().getPluginManager().callEvent(blockExplodeEvent);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(blockExplodeEvent);
 
             if (!blockExplodeEvent.isCancelled()) {
                 for (Block block : blockExplodeEvent.blockList()) {
@@ -108,7 +108,7 @@ public class ExplosiveTool extends SimpleSlimefunItem<ToolUseHandler> implements
         }
 
         ExplosiveToolBreakBlocksEvent event = new ExplosiveToolBreakBlocksEvent(p, b, blocksToDestroy, item, this);
-        Bukkit.getServer().getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
         /*
          * 修复: https://github.com/SlimefunGuguProject/Slimefun4/issues/853

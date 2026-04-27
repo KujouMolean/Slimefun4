@@ -148,7 +148,7 @@ public class OreWasher extends MultiBlockMachine {
                         Inventory outputInv = findOutputInventory(output, dispBlock, inv);
                         MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, input, output);
 
-                        Bukkit.getPluginManager().callEvent(event);
+                        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                         if (event.isCancelled()) {
                             return;
                         }

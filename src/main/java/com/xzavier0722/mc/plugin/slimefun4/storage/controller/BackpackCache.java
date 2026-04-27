@@ -15,7 +15,9 @@ public class BackpackCache {
     }
 
     void put(PlayerBackpack backpack) {
-        numCache.computeIfAbsent(backpack.getOwner().getUniqueId().toString(), k -> new HashMap<>())
+        numCache.computeIfAbsent(
+                        backpack.getOwner().getUniqueId().toString(),
+                        k -> java.util.Collections.synchronizedMap(new HashMap<>()))
                 .put(backpack.getId(), backpack);
         uuidCache.put(backpack.getUniqueId().toString(), backpack);
     }

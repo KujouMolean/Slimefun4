@@ -31,7 +31,7 @@ import org.bukkit.event.entity.EntityToggleGlideEvent;
  */
 public class ElytraImpactListener implements Listener {
 
-    private final Set<UUID> gliding = new HashSet<>();
+    private final Set<UUID> gliding = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     public ElytraImpactListener(@Nonnull Slimefun plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -45,7 +45,7 @@ public class ElytraImpactListener implements Listener {
             gliding.add(uuid);
         }
         // We tick 1 tick later because the player is being toggled of at the same tick as it takes damage.
-        Slimefun.instance().getServer().getScheduler().runTaskLater(Slimefun.instance(), gliding::clear, 1);
+        com.molean.folia.adapter.Folia.getScheduler().runTaskLaterAsync(Slimefun.instance(), gliding::clear, 1);
     }
 
     @EventHandler

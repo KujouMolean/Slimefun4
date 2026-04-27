@@ -33,12 +33,12 @@ abstract class AbstractItemNetwork extends Network {
      * This is a cache for the {@link BlockFace} a node is facing, so we don't need to
      * request the {@link BlockData} each time we visit a node
      */
-    protected Map<Location, BlockFace> connectorCache = new HashMap<>();
+    protected Map<Location, BlockFace> connectorCache = java.util.Collections.synchronizedMap(new HashMap<>());
 
     /**
      * This is our cache for the {@link ItemFilter} for each node.
      */
-    protected Map<Location, ItemFilter> filterCache = new HashMap<>();
+    protected Map<Location, ItemFilter> filterCache = java.util.Collections.synchronizedMap(new HashMap<>());
 
     protected AbstractItemNetwork(@Nonnull Location regulator) {
         super(Slimefun.getNetworkManager(), regulator);

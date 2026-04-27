@@ -42,7 +42,7 @@ public class NetherGoldPan extends GoldPan {
 
     @Override
     protected @Nonnull Set<GoldPanDrop> getGoldPanDrops() {
-        Set<GoldPanDrop> settings = new HashSet<>();
+        Set<GoldPanDrop> settings = new java.util.concurrent.CopyOnWriteArraySet<>();
 
         settings.add(new GoldPanDrop(this, "chance.QUARTZ", 50, new ItemStack(Material.QUARTZ)));
         settings.add(new GoldPanDrop(this, "chance.GOLD_NUGGET", 25, new ItemStack(Material.GOLD_NUGGET)));

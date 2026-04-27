@@ -36,7 +36,7 @@ public class ColoredFireworkStar extends CustomItemStack {
                             .build());
 
             if (lore.length > 0) {
-                List<String> lines = new ArrayList<>();
+                List<String> lines = new java.util.concurrent.CopyOnWriteArrayList<>();
 
                 for (String line : lore) {
                     lines.add(ChatColors.color(line));

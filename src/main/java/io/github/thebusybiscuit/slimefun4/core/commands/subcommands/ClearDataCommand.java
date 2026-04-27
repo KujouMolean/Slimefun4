@@ -53,7 +53,7 @@ public class ClearDataCommand extends SubCommand {
                         if (cleartype.equals("block")) {
                             controller.removeAllDataInWorldAsync(
                                     world,
-                                    () -> Slimefun.runSync(() -> Slimefun.getLocalization()
+                                    () -> com.molean.folia.adapter.Folia.runGlobally(() -> Slimefun.getLocalization()
                                             .sendMessage(
                                                     sender,
                                                     "commands.cleardata.success",
@@ -73,7 +73,7 @@ public class ClearDataCommand extends SubCommand {
                             controller.removeFromAllChunkInWorldAsync(
                                     world,
                                     oilresource.getKey().toString().replace(":", "-"),
-                                    () -> Slimefun.runSync(() -> Slimefun.getLocalization()
+                                    () -> com.molean.folia.adapter.Folia.runGlobally(() -> Slimefun.getLocalization()
                                             .sendMessage(
                                                     sender,
                                                     "commands.cleardata.success",

@@ -46,7 +46,7 @@ public class MakeshiftSmeltery extends AbstractSmeltery {
 
     @Override
     public List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> items = new ArrayList<>();
+        List<ItemStack> items = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (int i = 0; i < recipes.size() - 1; i += 2) {
             items.add(recipes.get(i)[0]);

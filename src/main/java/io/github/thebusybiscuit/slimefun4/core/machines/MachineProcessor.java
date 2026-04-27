@@ -225,7 +225,7 @@ public class MachineProcessor<T extends MachineOperation> {
              */
             if (operation.isFinished()) {
                 Event event = new AsyncMachineOperationFinishEvent(pos, this, operation);
-                Bukkit.getPluginManager().callEvent(event);
+                com.molean.folia.adapter.Folia.getPluginManager().ce(event);
             } else {
                 operation.onCancel(pos);
             }

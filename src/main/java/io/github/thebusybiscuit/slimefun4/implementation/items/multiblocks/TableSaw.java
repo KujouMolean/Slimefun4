@@ -43,7 +43,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class TableSaw extends MultiBlockMachine {
 
-    private final List<ItemStack> displayedRecipes = new ArrayList<>();
+    private final List<ItemStack> displayedRecipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private final ItemSetting<Boolean> canUseSlimefunItems = new ItemSetting<>(this, "can-use-slimefun-items", true);
 
@@ -131,7 +131,7 @@ public class TableSaw extends MultiBlockMachine {
 
         MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, item, output);
 
-        Bukkit.getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
         if (event.isCancelled()) {
             return;
         }

@@ -57,7 +57,7 @@ public class FarmerAndroid extends ProgrammableAndroid {
         AndroidInstance instance = new AndroidInstance(this, b);
 
         AndroidFarmEvent event = new AndroidFarmEvent(block, instance, isAdvanced, drop);
-        Bukkit.getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
         if (!event.isCancelled()) {
             drop = event.getDrop();

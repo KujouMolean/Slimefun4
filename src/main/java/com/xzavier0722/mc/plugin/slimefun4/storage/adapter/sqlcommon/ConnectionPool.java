@@ -22,7 +22,7 @@ public class ConnectionPool {
         this.connCreator = connCreator;
         this.maxConnCount = maxConnCount;
         this.freeConn = new LinkedList<>();
-        this.usingConn = new HashSet<>();
+        this.usingConn = new java.util.concurrent.CopyOnWriteArraySet<>();
     }
 
     public synchronized Connection getConn() throws SQLException, InterruptedException {

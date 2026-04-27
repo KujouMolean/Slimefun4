@@ -93,15 +93,15 @@ abstract class AbstractCraftingTable extends MultiBlockMachine {
 
         int size = backpack.getSize();
         PlayerBackpack.getAsync(input)
-                .thenAcceptAsync(
-                        (result) -> {
+                .thenAcceptAsync((result) -> com.molean.folia.adapter.Folia.runSync(
+                        () -> {
                             if (result != null) {
                                 result.setSize(size);
                                 PlayerBackpack.bindItem(output, result);
                             }
                             onReadyCb.run();
                         },
-                        ThreadUtils.getMainDelayedExecutor());
+                        p));
 
         return true;
     }

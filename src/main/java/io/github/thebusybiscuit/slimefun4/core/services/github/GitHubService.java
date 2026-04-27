@@ -52,7 +52,7 @@ public class GitHubService {
     public GitHubService(@Nonnull String repository) {
         this.repository = repository;
 
-        connectors = new HashSet<>();
+        connectors = new java.util.concurrent.CopyOnWriteArraySet<>();
         contributors = new ConcurrentHashMap<>();
     }
 
@@ -69,7 +69,7 @@ public class GitHubService {
         long period = TimeUnit.HOURS.toMillis(1);
         GitHubTask task = new GitHubTask(this);
 
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, task, 30 * 20L, period);
+        com.molean.folia.adapter.Folia.getScheduler().runTaskTimerAsynchronously(plugin, task, 30 * 20L, period);
     }
 
     /**

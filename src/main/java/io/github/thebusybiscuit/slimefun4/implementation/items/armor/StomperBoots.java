@@ -60,7 +60,7 @@ public class StomperBoots extends SlimefunItem {
                                         .hasPermission(player, entity.getLocation(), Interaction.ATTACK_PLAYER))) {
                     EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(
                             player, entity, DamageCause.ENTITY_ATTACK, fallDamageEvent.getDamage() / 2);
-                    Bukkit.getPluginManager().callEvent(event);
+                    com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
                     if (!event.isCancelled()) {
                         livingEntity.damage(event.getDamage());

@@ -173,7 +173,7 @@ public class VanillaAutoCrafter extends AbstractAutoCrafter implements NotDiagon
 
     @Nonnull
     private List<Recipe> getRecipesFor(@Nonnull ItemStack item) {
-        List<Recipe> recipes = new ArrayList<>();
+        List<Recipe> recipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         // Fixes #2913 - Bukkit.getRecipesFor() only checks for Materials
         MinecraftRecipeService recipeService = Slimefun.getMinecraftRecipeService();

@@ -9,16 +9,6 @@ import java.util.concurrent.FutureTask;
 import org.bukkit.Bukkit;
 
 public class ThreadUtils {
-    private static final Executor MAIN_THREAD_EXECUTOR;
-    private static final Executor MAIN_DELAYED_EXECUTOR;
-
-    public static Executor getMainThreadExecutor() {
-        return MAIN_THREAD_EXECUTOR;
-    }
-
-    public static Executor getMainDelayedExecutor() {
-        return MAIN_DELAYED_EXECUTOR;
-    }
 
     /**
      * Executes a task synchronously on the main thread.
@@ -27,12 +17,8 @@ public class ThreadUtils {
      *
      * @param runnable The task to execute synchronously
      */
-    public static void executeSync(Runnable runnable) {
-        if (Bukkit.isPrimaryThread()) {
-            runnable.run();
-        } else {
-            runSyncNMS(runnable);
-        }
+    public static void executeSync(Runnable runnable, com.molean.folia.adapter.SchedulerContext context) {
+        runSyncNMS(runnable, context);
     }
 
     /**
@@ -42,12 +28,8 @@ public class ThreadUtils {
      *
      * @param runnable The task to execute synchronously
      */
-    public static void executeSyncSched(Runnable runnable) {
-        if (Bukkit.isPrimaryThread()) {
-            CompletableFuture.runAsync(runnable, MAIN_THREAD_EXECUTOR);
-        } else {
-            runSyncNMS(runnable);
-        }
+    public static void executeSyncSched(Runnable runnable, com.molean.folia.adapter.SchedulerContext context) {
+        runSyncNMS(runnable, context);
     }
 
     /**
@@ -93,27 +75,7 @@ public class ThreadUtils {
      *
      * @param runnable The task to execute on the main thread
      */
-    private static void runSyncNMS(Runnable runnable) {
-        MAIN_THREAD_EXECUTOR.execute(runnable);
-    }
-
-    static {
-        Executor executor;
-        try {
-            Class<?> mcUtils = Class.forName("io.papermc.paper.util.MCUtil");
-            Field field = mcUtils.getDeclaredField("MAIN_EXECUTOR");
-            field.setAccessible(true);
-            executor = (Executor) field.get(null);
-        } catch (Throwable e) {
-            executor = (task) -> {
-                if (Bukkit.isPrimaryThread()) {
-                    task.run();
-                } else {
-                    Slimefun.runSync(task);
-                }
-            };
-        }
-        MAIN_THREAD_EXECUTOR = executor;
-        MAIN_DELAYED_EXECUTOR = Slimefun::runSync;
+    private static void runSyncNMS(Runnable runnable, com.molean.folia.adapter.SchedulerContext context) {
+        context.runTask(Slimefun.instance(), runnable);
     }
 }

@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  */
 public final class Debug {
 
-    private static final List<String> testCase = new ArrayList<>();
+    private static final List<String> testCase = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private Debug() {}
 

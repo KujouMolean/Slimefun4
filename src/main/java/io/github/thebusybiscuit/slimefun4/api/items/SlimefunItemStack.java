@@ -102,7 +102,7 @@ public class SlimefunItemStack extends ItemStack {
             }
 
             if (lore.length > 0) {
-                List<String> lines = new ArrayList<>();
+                List<String> lines = new java.util.concurrent.CopyOnWriteArrayList<>();
 
                 for (String line : lore) {
                     lines.add(ChatColor.translateAlternateColorCodes('&', line));
@@ -124,7 +124,7 @@ public class SlimefunItemStack extends ItemStack {
             }
 
             if (lore.length > 0) {
-                List<String> lines = new ArrayList<>();
+                List<String> lines = new java.util.concurrent.CopyOnWriteArrayList<>();
 
                 for (String line : lore) {
                     lines.add(ChatColor.translateAlternateColorCodes('&', line));
@@ -155,7 +155,7 @@ public class SlimefunItemStack extends ItemStack {
             }
 
             if (lore.length > 0) {
-                List<String> lines = new ArrayList<>();
+                List<String> lines = new java.util.concurrent.CopyOnWriteArrayList<>();
 
                 for (String line : lore) {
                     lines.add(ChatColor.translateAlternateColorCodes('&', line));

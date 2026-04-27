@@ -121,8 +121,8 @@ public class ElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> {
                     .getBlockDataController()
                     .loadBlockDataAsync(blockDataList, new IAsyncReadCallback<>() {
                         @Override
-                        public boolean runOnMainThread() {
-                            return true;
+                        public com.molean.folia.adapter.SchedulerContext getContext() {
+                            return com.molean.folia.adapter.SchedulerContext.of(b.getLocation());
                         }
 
                         @Override
@@ -235,30 +235,32 @@ public class ElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> {
 
     @ParametersAreNonnullByDefault
     private void teleport(Player player, ElevatorFloor floor) {
-        Slimefun.runSync(() -> {
-            users.add(player.getUniqueId());
+        com.molean.folia.adapter.Folia.runSync(
+                () -> {
+                    users.add(player.getUniqueId());
 
-            float yaw = player.getEyeLocation().getYaw() + 180;
+                    float yaw = player.getEyeLocation().getYaw() + 180;
 
-            if (yaw > 180) {
-                yaw = -180 + (yaw - 180);
-            }
+                    if (yaw > 180) {
+                        yaw = -180 + (yaw - 180);
+                    }
 
-            Location loc = floor.getLocation();
-            Location destination = new Location(
-                    player.getWorld(),
-                    loc.getX() + 0.5,
-                    loc.getY() + 0.4,
-                    loc.getZ() + 0.5,
-                    yaw,
-                    player.getEyeLocation().getPitch());
+                    Location loc = floor.getLocation();
+                    Location destination = new Location(
+                            player.getWorld(),
+                            loc.getX() + 0.5,
+                            loc.getY() + 0.4,
+                            loc.getZ() + 0.5,
+                            yaw,
+                            player.getEyeLocation().getPitch());
 
-            player.teleportAsync(destination).thenAccept(teleported -> {
-                if (teleported.booleanValue()) {
-                    player.sendTitle(ChatColor.WHITE + ChatColors.color(floor.getName()), null, 20, 60, 20);
-                }
-            });
-        });
+                    player.teleportAsync(destination).thenAccept(teleported -> {
+                        if (teleported.booleanValue()) {
+                            player.sendTitle(ChatColor.WHITE + ChatColors.color(floor.getName()), null, 20, 60, 20);
+                        }
+                    });
+                },
+                player);
     }
 
     @ParametersAreNonnullByDefault

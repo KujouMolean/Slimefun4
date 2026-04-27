@@ -35,7 +35,7 @@ public class AutoDrier extends AContainer implements RecipeDisplayItem, NotHoppe
 
     @Override
     protected void registerDefaultRecipes() {
-        recipeList = new ArrayList<>();
+        recipeList = new java.util.concurrent.CopyOnWriteArrayList<>();
         recipeList.add(new ItemStack(Material.ROTTEN_FLESH));
         recipeList.add(new ItemStack(Material.LEATHER));
 

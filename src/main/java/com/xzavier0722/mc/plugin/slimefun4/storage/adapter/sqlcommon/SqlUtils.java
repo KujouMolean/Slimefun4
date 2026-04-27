@@ -143,7 +143,7 @@ public class SqlUtils {
                 int columnCount = 0;
                 while (result.next()) {
                     if (re == null) {
-                        re = new ArrayList<>();
+                        re = new java.util.concurrent.CopyOnWriteArrayList<>();
                         metaData = result.getMetaData();
                         columnCount = metaData.getColumnCount();
                     }

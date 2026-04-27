@@ -60,7 +60,7 @@ public class MultiBlockListener implements Listener {
 
             MultiBlock mb = multiblocks.getLast();
             MultiBlockInteractEvent event = new MultiBlockInteractEvent(p, mb, b, e.getBlockFace());
-            Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
             // Fixes #2809
             if (!event.isCancelled()) {

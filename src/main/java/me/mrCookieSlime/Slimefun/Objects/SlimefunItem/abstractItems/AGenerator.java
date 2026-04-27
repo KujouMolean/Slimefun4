@@ -184,7 +184,7 @@ public abstract class AGenerator extends AbstractEnergyProvider implements Machi
                 return 0;
             }
         } else {
-            Map<Integer, Integer> found = new HashMap<>();
+            Map<Integer, Integer> found = java.util.Collections.synchronizedMap(new HashMap<>());
             MachineFuel fuel = findRecipe(inv, found);
 
             if (fuel != null) {

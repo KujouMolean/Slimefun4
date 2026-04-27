@@ -62,7 +62,7 @@ class GitHubTask implements Runnable {
          * Store all queried usernames to prevent 429 responses for pinging
          * the same URL twice in one run.
          */
-        Map<String, String> skins = new HashMap<>();
+        Map<String, String> skins = java.util.Collections.synchronizedMap(new HashMap<>());
         int requests = 0;
 
         for (Contributor contributor : gitHubService.getContributors().values()) {
@@ -79,7 +79,8 @@ class GitHubTask implements Runnable {
                 && Slimefun.instance() != null
                 && Slimefun.instance().isEnabled()) {
             // Slow down API requests and wait a minute after more than x requests were made
-            Bukkit.getScheduler().runTaskLaterAsynchronously(Slimefun.instance(), this::grabTextures, 2 * 60 * 20L);
+            com.molean.folia.adapter.Folia.getScheduler()
+                    .runTaskLaterAsync(Slimefun.instance(), this::grabTextures, 2 * 60 * 20L);
         }
 
         for (GitHubConnector connector : gitHubService.getConnectors()) {
@@ -129,8 +130,8 @@ class GitHubTask implements Runnable {
 
                 // Retry after 5 minutes if it was just rate-limiting
                 if (msg != null && msg.contains("429")) {
-                    Bukkit.getScheduler()
-                            .runTaskLaterAsynchronously(Slimefun.instance(), this::grabTextures, 5 * 60 * 20L);
+                    com.molean.folia.adapter.Folia.getScheduler()
+                            .runTaskLaterAsync(Slimefun.instance(), this::grabTextures, 5 * 60 * 20L);
                 }
 
                 return -1;

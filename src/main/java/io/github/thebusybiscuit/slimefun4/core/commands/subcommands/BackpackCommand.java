@@ -99,8 +99,8 @@ class BackpackCommand extends SubCommand {
                 .getProfileDataController()
                 .getBackpacksAsync(owner.getUniqueId().toString(), new IAsyncReadCallback<>() {
                     @Override
-                    public boolean runOnMainThread() {
-                        return true;
+                    public com.molean.folia.adapter.SchedulerContext getContext() {
+                        return com.molean.folia.adapter.SchedulerContext.of(p);
                     }
 
                     @Override

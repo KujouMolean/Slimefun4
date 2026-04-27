@@ -45,7 +45,7 @@ class CargoNetworkTask implements Runnable {
 
     private final NetworkManager manager;
     private final CargoNet network;
-    private final Map<Location, Inventory> inventories = new HashMap<>();
+    private final Map<Location, Inventory> inventories = java.util.Collections.synchronizedMap(new HashMap<>());
 
     private final Map<Location, Integer> inputs;
     private final Map<Integer, List<Location>> outputs;

@@ -32,7 +32,7 @@ import org.bukkit.inventory.ItemStack;
 public class RadiationTask extends AbstractArmorTask {
 
     private static final int GRACE_PERIOD_DURATION = Slimefun.getCfg().getInt("options.radiation-grace-period");
-    private static final Map<UUID, Long> ACTIVE_GRACE_PERIODS = new HashMap<>();
+    private static final Map<UUID, Long> ACTIVE_GRACE_PERIODS = java.util.Collections.synchronizedMap(new HashMap<>());
 
     private final RadiationSymptom[] symptoms = RadiationSymptom.values();
 
@@ -76,13 +76,15 @@ public class RadiationTask extends AbstractArmorTask {
 
             int exposureLevelAfter = RadiationUtils.getExposure(p);
 
-            Slimefun.runSync(() -> {
-                for (RadiationSymptom symptom : symptoms) {
-                    if (symptom.shouldApply(exposureLevelAfter)) {
-                        symptom.apply(p);
-                    }
-                }
-            });
+            com.molean.folia.adapter.Folia.runSync(
+                    () -> {
+                        for (RadiationSymptom symptom : symptoms) {
+                            if (symptom.shouldApply(exposureLevelAfter)) {
+                                symptom.apply(p);
+                            }
+                        }
+                    },
+                    p);
 
             if (exposureLevelAfter > 0 || exposureLevelBefore > 0) {
                 String msg = Slimefun.getLocalization()

@@ -18,7 +18,7 @@ public class InventoryUtil {
         if (Bukkit.isPrimaryThread()) {
             p.openInventory(inventory);
         } else {
-            Slimefun.runSync(() -> p.openInventory(inventory));
+            com.molean.folia.adapter.Folia.runSync(() -> p.openInventory(inventory), p);
         }
     }
 
@@ -35,7 +35,9 @@ public class InventoryUtil {
         if (Bukkit.isPrimaryThread()) {
             new LinkedList<>(inventory.getViewers()).forEach(HumanEntity::closeInventory);
         } else {
-            Slimefun.runSync(() -> new LinkedList<>(inventory.getViewers()).forEach(HumanEntity::closeInventory));
+            com.molean.folia.adapter.Folia.runSync(
+                    () -> new LinkedList<>(inventory.getViewers()).forEach(HumanEntity::closeInventory),
+                    inventory.getLocation());
         }
     }
 
@@ -45,7 +47,7 @@ public class InventoryUtil {
         if (Bukkit.isPrimaryThread()) {
             callback.run();
         } else {
-            Slimefun.runSync(callback);
+            com.molean.folia.adapter.Folia.runSync(callback, inventory.getLocation());
         }
     }
 }

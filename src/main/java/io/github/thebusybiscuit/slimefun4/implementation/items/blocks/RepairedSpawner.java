@@ -88,6 +88,6 @@ public class RepairedSpawner extends AbstractMonsterSpawner {
          * There should be no drops by default since drops are handled
          * by the Pickaxe of Containment exclusively.
          */
-        return new ArrayList<>();
+        return new java.util.concurrent.CopyOnWriteArrayList<>();
     }
 }

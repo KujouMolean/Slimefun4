@@ -69,7 +69,7 @@ public class PlayerProfile {
     private boolean markedForDeletion = false;
 
     private final Set<Research> researches;
-    private final List<Waypoint> waypoints = new CopyOnWriteArrayList<>();
+    private final List<Waypoint> waypoints = new java.util.concurrent.CopyOnWriteArrayList<>();
     private final GuideHistory guideHistory = new GuideHistory(this);
 
     private final HashedArmorpiece[] armor = {
@@ -77,7 +77,7 @@ public class PlayerProfile {
     };
 
     public PlayerProfile(@Nonnull OfflinePlayer p, int backpackNum) {
-        this(p, backpackNum, new HashSet<>());
+        this(p, backpackNum, new java.util.concurrent.CopyOnWriteArraySet<>());
     }
 
     public PlayerProfile(@Nonnull OfflinePlayer p, int backpackNum, Set<Research> researches) {
@@ -389,9 +389,8 @@ public class PlayerProfile {
      */
     public @Nullable Player getPlayer() {
         if (getOwner() != null) {
-            return getOwner().getPlayer();
+            return Bukkit.getPlayer(getOwner().getUniqueId());
         }
-
         return null;
     }
 
@@ -564,7 +563,7 @@ public class PlayerProfile {
             private void invokeCb(PlayerProfile pf, boolean newlyCreated) {
                 if (newlyCreated) {
                     AsyncProfileLoadEvent event = new AsyncProfileLoadEvent(pf);
-                    Bukkit.getPluginManager().callEvent(event);
+                    com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                 }
 
                 if (cb != null) {

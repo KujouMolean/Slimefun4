@@ -64,7 +64,7 @@ public abstract class AContainer extends SlimefunItem
     /**
      * The list of registered machine recipes.
      */
-    protected final List<MachineRecipe> recipes = new ArrayList<>();
+    protected final List<MachineRecipe> recipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private final MachineProcessor<CraftingOperation> processor = new MachineProcessor<>(this);
 
@@ -426,7 +426,7 @@ public abstract class AContainer extends SlimefunItem
     }
 
     protected MachineRecipe findNextRecipe(BlockMenu inv) {
-        Map<Integer, ItemStack> inventory = new HashMap<>();
+        Map<Integer, ItemStack> inventory = java.util.Collections.synchronizedMap(new HashMap<>());
 
         for (int slot : getInputSlots()) {
             ItemStack item = inv.getItemInSlot(slot);
@@ -436,7 +436,7 @@ public abstract class AContainer extends SlimefunItem
             }
         }
 
-        Map<Integer, Integer> found = new HashMap<>();
+        Map<Integer, Integer> found = java.util.Collections.synchronizedMap(new HashMap<>());
 
         for (MachineRecipe recipe : recipes) {
             for (ItemStack input : recipe.getInput()) {

@@ -37,7 +37,7 @@ public class AncientAltar extends SlimefunItem {
      */
     private static final int DEFAULT_STEP_DELAY = 8;
 
-    private final List<AltarRecipe> recipes = new ArrayList<>();
+    private final List<AltarRecipe> recipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private final ItemSetting<Integer> stepDelay =
             new IntRangeSetting(this, "step-delay", 0, DEFAULT_STEP_DELAY, Integer.MAX_VALUE);

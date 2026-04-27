@@ -20,9 +20,9 @@ import org.apache.commons.lang.Validate;
 @Beta
 public class PlayerData {
 
-    private final Set<Research> researches = new HashSet<>();
-    private final Map<Integer, PlayerBackpack> backpacks = new HashMap<>();
-    private final Set<Waypoint> waypoints = new HashSet<>();
+    private final Set<Research> researches = new java.util.concurrent.CopyOnWriteArraySet<>();
+    private final Map<Integer, PlayerBackpack> backpacks = java.util.Collections.synchronizedMap(new HashMap<>());
+    private final Set<Waypoint> waypoints = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     public PlayerData(Set<Research> researches, Map<Integer, PlayerBackpack> backpacks, Set<Waypoint> waypoints) {
         this.researches.addAll(researches);

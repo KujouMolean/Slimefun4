@@ -30,7 +30,7 @@ public class LegacyStorage implements Storage {
         Config waypointsFile = new Config("data-storage/Slimefun/waypoints/" + uuid + ".yml");
 
         // Load research
-        Set<Research> researches = new HashSet<>();
+        Set<Research> researches = new java.util.concurrent.CopyOnWriteArraySet<>();
         for (Research research : Slimefun.getRegistry().getResearches()) {
             if (playerFile.contains("researches." + research.getID())) {
                 researches.add(research);
@@ -38,13 +38,13 @@ public class LegacyStorage implements Storage {
         }
 
         // Load backpacks
-        HashMap<Integer, PlayerBackpack> backpacks = new HashMap<>();
+        java.util.Map<Integer, PlayerBackpack> backpacks = java.util.Collections.synchronizedMap(new HashMap<>());
         for (String key : playerFile.getKeys("backpacks")) {
             try {
                 int id = Integer.parseInt(key);
                 int size = playerFile.getInt("backpacks." + key + ".size");
 
-                HashMap<Integer, ItemStack> items = new HashMap<>();
+                java.util.Map<Integer, ItemStack> items = java.util.Collections.synchronizedMap(new HashMap<>());
                 for (int i = 0; i < size; i++) {
                     items.put(i, playerFile.getItem("backpacks." + key + ".contents." + i));
                 }
@@ -64,7 +64,7 @@ public class LegacyStorage implements Storage {
         }
 
         // Load waypoints
-        Set<Waypoint> waypoints = new HashSet<>();
+        Set<Waypoint> waypoints = new java.util.concurrent.CopyOnWriteArraySet<>();
         for (String key : waypointsFile.getKeys()) {
             try {
                 if (waypointsFile.contains(key + ".world")

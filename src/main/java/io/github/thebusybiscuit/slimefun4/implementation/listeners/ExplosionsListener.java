@@ -103,8 +103,8 @@ public class ExplosionsListener implements Listener {
                         .getBlockDataController()
                         .loadDataAsync(blockData, new IAsyncReadCallback<>() {
                             @Override
-                            public boolean runOnMainThread() {
-                                return true;
+                            public com.molean.folia.adapter.SchedulerContext getContext() {
+                                return com.molean.folia.adapter.SchedulerContext.of(block.getLocation());
                             }
 
                             @Override

@@ -48,7 +48,7 @@ public class GoldPan extends SimpleSlimefunItem<ItemUseHandler> implements Recip
 
     private final RandomizedSet<ItemStack> randomizer = new RandomizedSet<>();
     private final Set<Material> inputMaterials = new HashSet<>(List.of(Material.GRAVEL));
-    private final Set<GoldPanDrop> drops = new HashSet<>();
+    private final Set<GoldPanDrop> drops = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     @ParametersAreNonnullByDefault
     public GoldPan(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
@@ -84,7 +84,7 @@ public class GoldPan extends SimpleSlimefunItem<ItemUseHandler> implements Recip
      * @return The {@link Set} of {@link GoldPanDrop GoldPanDrops} this {@link GoldPan} can drop.
      */
     protected @Nonnull Set<GoldPanDrop> getGoldPanDrops() {
-        Set<GoldPanDrop> settings = new HashSet<>();
+        Set<GoldPanDrop> settings = new java.util.concurrent.CopyOnWriteArraySet<>();
 
         settings.add(new GoldPanDrop(this, "chance.FLINT", 40, new ItemStack(Material.FLINT)));
         settings.add(new GoldPanDrop(this, "chance.CLAY", 20, new ItemStack(Material.CLAY_BALL)));
@@ -183,7 +183,7 @@ public class GoldPan extends SimpleSlimefunItem<ItemUseHandler> implements Recip
     @Nonnull
     @Override
     public List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> recipes = new ArrayList<>();
+        List<ItemStack> recipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (GoldPanDrop drop : drops) {
             if (drop.getValue() <= 0) {

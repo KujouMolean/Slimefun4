@@ -17,7 +17,8 @@ import org.bukkit.block.Block;
  */
 public class CrafterInteractorManager {
 
-    private static final Map<String, CrafterInteractorHandler> handlers = new HashMap<>();
+    private static final Map<String, CrafterInteractorHandler> handlers =
+            java.util.Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Register the specific slimefun item as crafter interactor.

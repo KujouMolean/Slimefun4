@@ -30,7 +30,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
  */
 public class SlimefunBowListener implements Listener {
 
-    private final Map<UUID, SlimefunBow> projectiles = new HashMap<>();
+    private final Map<UUID, SlimefunBow> projectiles = java.util.Collections.synchronizedMap(new HashMap<>());
 
     public void register(@Nonnull Slimefun plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -60,12 +60,13 @@ public class SlimefunBowListener implements Listener {
 
     @EventHandler
     public void onArrowHit(ProjectileHitEvent e) {
-        Slimefun.runSync(
+        com.molean.folia.adapter.Folia.runSync(
                 () -> {
                     if (e.getEntity().isValid() && e.getEntity() instanceof Arrow) {
                         projectiles.remove(e.getEntity().getUniqueId());
                     }
                 },
+                e.getEntity(),
                 4L);
     }
 

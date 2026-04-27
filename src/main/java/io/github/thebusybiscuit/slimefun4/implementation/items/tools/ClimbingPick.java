@@ -60,7 +60,7 @@ public class ClimbingPick extends SimpleSlimefunItem<ItemUseHandler> implements 
     private final ItemSetting<Boolean> damageOnUse = new ItemSetting<>(this, "damage-on-use", true);
 
     private final Map<Material, ClimbableSurface> surfaces = new EnumMap<>(Material.class);
-    private final Set<UUID> users = new HashSet<>();
+    private final Set<UUID> users = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     @ParametersAreNonnullByDefault
     public ClimbingPick(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
@@ -200,10 +200,10 @@ public class ClimbingPick extends SimpleSlimefunItem<ItemUseHandler> implements 
         if (power > 0.05) {
             // Prevent players from spamming this item by enforcing a cooldown
             if (users.add(p.getUniqueId())) {
-                Slimefun.runSync(() -> users.remove(p.getUniqueId()), COOLDOWN);
+                com.molean.folia.adapter.Folia.runSync(() -> users.remove(p.getUniqueId()), p, COOLDOWN);
                 Vector velocity = new Vector(0, power, 0);
                 ClimbingPickLaunchEvent event = new ClimbingPickLaunchEvent(p, velocity, this, item, block);
-                Bukkit.getPluginManager().callEvent(event);
+                com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
                 if (!event.isCancelled()) {
                     p.setVelocity(event.getVelocity());
@@ -262,7 +262,7 @@ public class ClimbingPick extends SimpleSlimefunItem<ItemUseHandler> implements 
 
     @Override
     public List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> display = new ArrayList<>();
+        List<ItemStack> display = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (Material mat : surfaces.keySet()) {
             if (mat.isItem()) {

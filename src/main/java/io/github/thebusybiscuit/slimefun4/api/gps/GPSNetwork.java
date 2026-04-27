@@ -91,7 +91,7 @@ public class GPSNetwork {
      *            Whether that {@link GPSTransmitter} is online
      */
     public void updateTransmitter(@Nonnull Location l, @Nonnull UUID uuid, boolean online) {
-        Set<Location> set = transmitters.computeIfAbsent(uuid, id -> new HashSet<>());
+        Set<Location> set = transmitters.computeIfAbsent(uuid, id -> new java.util.concurrent.CopyOnWriteArraySet<>());
 
         if (online) {
             set.add(l);
@@ -404,33 +404,36 @@ public class GPSNetwork {
                 return;
             }
 
-            Slimefun.runSync(() -> {
-                WaypointCreateEvent event = new WaypointCreateEvent(p, name, l);
-                Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.runSync(
+                    () -> {
+                        WaypointCreateEvent event = new WaypointCreateEvent(p, name, l);
+                        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
-                if (!event.isCancelled()) {
-                    String id = ChatColor.stripColor(ChatColors.color(event.getName()))
-                            .toUpperCase(Locale.ROOT)
-                            .replace(' ', '_');
+                        if (!event.isCancelled()) {
+                            String id = ChatColor.stripColor(ChatColors.color(event.getName()))
+                                    .toUpperCase(Locale.ROOT)
+                                    .replace(' ', '_');
 
-                    for (Waypoint wp : profile.getWaypoints()) {
-                        if (wp.getId().equals(id)) {
-                            Slimefun.getLocalization()
-                                    .sendMessage(
-                                            p,
-                                            "gps.waypoint.duplicate",
-                                            true,
-                                            msg -> msg.replace("%waypoint%", event.getName()));
-                            return;
+                            for (Waypoint wp : profile.getWaypoints()) {
+                                if (wp.getId().equals(id)) {
+                                    Slimefun.getLocalization()
+                                            .sendMessage(
+                                                    p,
+                                                    "gps.waypoint.duplicate",
+                                                    true,
+                                                    msg -> msg.replace("%waypoint%", event.getName()));
+                                    return;
+                                }
+                            }
+
+                            profile.addWaypoint(
+                                    new Waypoint(p.getUniqueId(), id, event.getLocation(), event.getName()));
+
+                            SoundEffect.GPS_NETWORK_ADD_WAYPOINT.playFor(p);
+                            Slimefun.getLocalization().sendMessage(p, "gps.waypoint.added", true);
                         }
-                    }
-
-                    profile.addWaypoint(new Waypoint(p.getUniqueId(), id, event.getLocation(), event.getName()));
-
-                    SoundEffect.GPS_NETWORK_ADD_WAYPOINT.playFor(p);
-                    Slimefun.getLocalization().sendMessage(p, "gps.waypoint.added", true);
-                }
-            });
+                    },
+                    p);
         });
     }
 
@@ -445,7 +448,7 @@ public class GPSNetwork {
      */
     @Nonnull
     public Set<Location> getTransmitters(@Nonnull UUID uuid) {
-        return transmitters.getOrDefault(uuid, new HashSet<>());
+        return transmitters.getOrDefault(uuid, new java.util.concurrent.CopyOnWriteArraySet<>());
     }
 
     /**

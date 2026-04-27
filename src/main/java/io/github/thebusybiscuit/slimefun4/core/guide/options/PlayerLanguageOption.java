@@ -44,7 +44,7 @@ class PlayerLanguageOption implements SlimefunGuideOption<String> {
                             + ")")
                     : Slimefun.getLocalization().getMessage(p, "languages." + language.getId());
 
-            List<String> lore = new ArrayList<>();
+            List<String> lore = new java.util.concurrent.CopyOnWriteArrayList<>();
             lore.add("");
             lore.add("&e&o" + Slimefun.getLocalization().getMessage(p, "guide.work-in-progress"));
             lore.add("");
@@ -144,10 +144,8 @@ class PlayerLanguageOption implements SlimefunGuideOption<String> {
                         "",
                         "&7\u21E8 &e" + Slimefun.getLocalization().getMessage(p, "guide.languages.select-default")),
                 (pl, i, item, action) -> {
-                    Slimefun.instance()
-                            .getServer()
-                            .getPluginManager()
-                            .callEvent(new PlayerLanguageChangeEvent(
+                    com.molean.folia.adapter.Folia.getPluginManager()
+                            .ce(new PlayerLanguageChangeEvent(
                                     pl, Slimefun.getLocalization().getLanguage(pl), defaultLanguage));
                     setSelectedOption(pl, guide, null);
 
@@ -171,10 +169,8 @@ class PlayerLanguageOption implements SlimefunGuideOption<String> {
                             "",
                             "&7\u21E8 &e" + Slimefun.getLocalization().getMessage(p, "guide.languages.select")),
                     (pl, i, item, action) -> {
-                        Slimefun.instance()
-                                .getServer()
-                                .getPluginManager()
-                                .callEvent(new PlayerLanguageChangeEvent(
+                        com.molean.folia.adapter.Folia.getPluginManager()
+                                .ce(new PlayerLanguageChangeEvent(
                                         pl, Slimefun.getLocalization().getLanguage(pl), language));
                         setSelectedOption(pl, guide, language.getId());
 

@@ -87,7 +87,7 @@ public class BlockDataController extends ADataController {
     private boolean enableDelayedSaving = false;
 
     private int delayedSecond = 0;
-    private BukkitTask looperTask;
+    private io.papermc.paper.threadedregions.scheduler.ScheduledTask looperTask;
     /**
      * 区块数据加载模式
      * {@link ChunkDataLoadMode}
@@ -99,7 +99,7 @@ public class BlockDataController extends ADataController {
      */
     BlockDataController() {
         super(DataType.BLOCK_STORAGE);
-        delayedWriteTasks = new ConcurrentHashMap<>();
+        delayedWriteTasks = java.util.Collections.synchronizedMap(new HashMap<>());
         loadedChunk = new ConcurrentHashMap<>();
         loadedUniversalData = new ConcurrentHashMap<>();
         invSnapshots = new ConcurrentHashMap<>();
@@ -129,15 +129,21 @@ public class BlockDataController extends ADataController {
             case LOAD_ON_STARTUP -> loadLoadedWorlds();
         }
 
-        Bukkit.getScheduler().runTaskLater(Slimefun.instance(), this::loadUniversalRecord, 1);
+        com.molean.folia.adapter.Folia.getScheduler()
+                .runTaskLaterAsync(
+                        Slimefun.instance(),
+                        () -> {
+                            loadUniversalRecord();
+                        },
+                        1);
     }
 
     /**
      * 加载所有服务器已加载的世界中的数据
      */
     private void loadLoadedWorlds() {
-        Bukkit.getScheduler()
-                .runTaskLater(
+        com.molean.folia.adapter.Folia.getScheduler()
+                .runTaskLaterAsync(
                         Slimefun.instance(),
                         () -> {
                             for (var world : Bukkit.getWorlds()) {
@@ -151,13 +157,16 @@ public class BlockDataController extends ADataController {
      * 加载所有服务器已加载的世界区块中的数据
      */
     private void loadLoadedChunks() {
-        Bukkit.getScheduler()
-                .runTaskLater(
+        com.molean.folia.adapter.Folia.getScheduler()
+                .runTaskLaterAsync(
                         Slimefun.instance(),
                         () -> {
                             for (var world : Bukkit.getWorlds()) {
                                 for (var chunk : world.getLoadedChunks()) {
-                                    loadChunk(chunk, false, true);
+                                    com.molean.folia.adapter.Folia.getScheduler()
+                                            .runTask(Slimefun.instance(), world, chunk.getX(), chunk.getZ(), () -> {
+                                                loadChunk(chunk, false, true);
+                                            });
                                 }
                             }
                         },
@@ -178,7 +187,7 @@ public class BlockDataController extends ADataController {
         }
         enableDelayedSaving = true;
         this.delayedSecond = delayedSecond;
-        looperTask = Bukkit.getScheduler()
+        looperTask = com.molean.folia.adapter.Folia.getScheduler()
                 .runTaskTimerAsynchronously(
                         p,
                         new DelayedSavingLooperTask(
@@ -819,7 +828,7 @@ public class BlockDataController extends ADataController {
             // not force loading
             if (isNewChunk) {
                 chunkData.setIsDataLoaded(true);
-                Bukkit.getPluginManager().callEvent(new SlimefunChunkDataLoadEvent(chunkData));
+                com.molean.folia.adapter.Folia.getPluginManager().ce(new SlimefunChunkDataLoadEvent(chunkData));
                 return;
             }
 
@@ -854,7 +863,7 @@ public class BlockDataController extends ADataController {
             }
         });
 
-        Bukkit.getPluginManager().callEvent(new SlimefunChunkDataLoadEvent(chunkData));
+        com.molean.folia.adapter.Folia.getPluginManager().ce(new SlimefunChunkDataLoadEvent(chunkData));
     }
 
     public void loadWorld(World world) {
@@ -872,7 +881,13 @@ public class BlockDataController extends ADataController {
         key.addCondition(FieldKey.CHUNK, world.getName() + ";%");
         getData(key, true).forEach(data -> chunkKeys.add(data.get(FieldKey.CHUNK)));
 
-        chunkKeys.forEach(cKey -> loadChunk(LocationUtils.toChunk(world, cKey), false, true));
+        chunkKeys.forEach(cKey -> {
+            var loc = cKey.split(";")[1].split(":");
+            com.molean.folia.adapter.Folia.getScheduler()
+                    .runTask(Slimefun.instance(), world, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), () -> {
+                        loadChunk(LocationUtils.toChunk(world, cKey), false, true);
+                    });
+        });
         logger.log(
                 Level.INFO, "世界 {0} 数据加载完成, 耗时 {1}ms", new Object[] {worldName, (System.currentTimeMillis() - start)});
     }
@@ -1674,7 +1689,7 @@ public class BlockDataController extends ADataController {
 
             var universalData = createUniversalBlock(l, sfId);
 
-            Slimefun.runSync(
+            com.molean.folia.adapter.Folia.runSync(
                     () -> {
                         if (Slimefun.getBlockDataService()
                                 .isTileEntity(l.getBlock().getType())) {
@@ -1682,6 +1697,7 @@ public class BlockDataController extends ADataController {
                                     .updateUniversalDataUUID(l.getBlock(), String.valueOf(universalData.getUUID()));
                         }
                     },
+                    l,
                     10L);
 
             kvData.forEach(recordSet -> universalData.setData(

@@ -122,7 +122,7 @@ public abstract class AbstractAutoCrafter extends SlimefunItem implements Energy
         recipeStorageKey = new NamespacedKey(Slimefun.instance(), "recipe_key");
         recipeEnabledKey = new NamespacedKey(Slimefun.instance(), "recipe_enabled");
 
-        recipeCache = new HashMap<>();
+        recipeCache = java.util.Collections.synchronizedMap(new HashMap<>());
 
         addItemHandler(new BlockTicker() {
 
@@ -503,13 +503,13 @@ public abstract class AbstractAutoCrafter extends SlimefunItem implements Energy
 
         // Check if we have an empty slot
         if (inv.canOutput(recipe.getResult())) {
-            Map<Integer, Integer> itemQuantities = new HashMap<>();
+            Map<Integer, Integer> itemQuantities = java.util.Collections.synchronizedMap(new HashMap<>());
 
             if (!inv.matchRecipe(this, recipe.getIngredients(), itemQuantities)) {
                 return false;
             }
 
-            List<ItemStack> leftoverItems = new ArrayList<>();
+            List<ItemStack> leftoverItems = new java.util.concurrent.CopyOnWriteArrayList<>();
 
             // Remove ingredients
             for (Map.Entry<Integer, Integer> entry : itemQuantities.entrySet()) {
@@ -665,7 +665,7 @@ public abstract class AbstractAutoCrafter extends SlimefunItem implements Energy
 
         if (recipe instanceof SlimefunItemRecipe) {
             // Recipe is for slimefun item
-            List<ItemStackWrapper> itemInRecipe = new ArrayList<>();
+            List<ItemStackWrapper> itemInRecipe = new java.util.concurrent.CopyOnWriteArrayList<>();
             SlimefunItem recipeResult = SlimefunItem.getByItem(recipe.getResult());
 
             if (recipeResult == null) {
@@ -702,7 +702,7 @@ public abstract class AbstractAutoCrafter extends SlimefunItem implements Energy
         }
 
         // Not shape less recipe, do check the shape.
-        Set<ItemStack> itemInRecipe = new HashSet<>();
+        Set<ItemStack> itemInRecipe = new java.util.concurrent.CopyOnWriteArraySet<>();
         // Loop to read each recipe shape char
         for (String row : ((ShapedRecipe) vanillaRecipe).getShape()) {
             for (char each : row.toCharArray()) {

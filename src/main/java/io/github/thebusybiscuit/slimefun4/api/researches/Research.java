@@ -300,7 +300,7 @@ public class Research implements Keyed {
                 guide.openItemGroup(profile, itemGroup, page);
             } else {
                 PlayerPreResearchEvent event = new PlayerPreResearchEvent(player, this, sfItem);
-                Bukkit.getPluginManager().callEvent(event);
+                com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
                 if (!event.isCancelled()) {
                     if (this.canUnlock(player)) {

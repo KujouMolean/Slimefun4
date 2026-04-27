@@ -30,7 +30,7 @@ import org.bukkit.block.BlockFace;
  */
 public class MultiBlock {
 
-    private static final Set<Tag<Material>> SUPPORTED_TAGS = new HashSet<>();
+    private static final Set<Tag<Material>> SUPPORTED_TAGS = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     static {
         // Allow variations of different types of wood to be used

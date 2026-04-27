@@ -197,7 +197,7 @@ public class SurvivalSlimefunGuide implements SlimefunGuideImplementation {
                 return false;
             });
         } else {
-            List<String> lore = new ArrayList<>();
+            List<String> lore = new java.util.concurrent.CopyOnWriteArrayList<>();
             lore.add("");
 
             for (String line : Slimefun.getLocalization().getMessages(p, "guide.locked-itemgroup")) {

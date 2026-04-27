@@ -67,7 +67,7 @@ public class ElectricGoldPan extends AContainer implements RecipeDisplayItem {
 
     @Override
     public @Nonnull List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> recipes = new ArrayList<>();
+        List<ItemStack> recipes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         recipes.addAll(goldPan.getDisplayRecipes());
         recipes.addAll(netherGoldPan.getDisplayRecipes());

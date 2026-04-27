@@ -61,8 +61,8 @@ public class AutoDisenchanter extends AbstractEnchantmentMachine {
             }
 
             // Call an event so other Plugins can modify it.
-            AutoDisenchantEvent event = new AutoDisenchantEvent(item, menu.getBlock());
-            Bukkit.getPluginManager().callEvent(event);
+            AutoDisenchantEvent event = new AutoDisenchantEvent(item);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
             if (event.isCancelled()) {
                 if (Slimefun.getItemStackService()
@@ -90,7 +90,7 @@ public class AutoDisenchanter extends AbstractEnchantmentMachine {
 
     @ParametersAreNonnullByDefault
     private @Nullable MachineRecipe disenchant(BlockMenu menu, ItemStack item, ItemStack book) {
-        Map<Enchantment, Integer> enchantments = new HashMap<>();
+        Map<Enchantment, Integer> enchantments = java.util.Collections.synchronizedMap(new HashMap<>());
 
         if (!isEnchantmentCountAllowed(item.getEnchantments().size())) {
             showEnchantmentLimitWarning(menu);

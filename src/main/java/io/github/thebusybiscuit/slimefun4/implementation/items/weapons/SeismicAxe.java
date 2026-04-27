@@ -58,7 +58,7 @@ public class SeismicAxe extends SimpleSlimefunItem<ItemUseHandler> implements No
         return e -> {
             Player p = e.getPlayer();
             List<Block> blocks = p.getLineOfSight(null, RANGE);
-            Set<UUID> pushedEntities = new HashSet<>();
+            Set<UUID> pushedEntities = new java.util.concurrent.CopyOnWriteArraySet<>();
 
             // Skip the first two, too close to the player.
             for (int i = 2; i < blocks.size(); i++) {
@@ -122,7 +122,7 @@ public class SeismicAxe extends SimpleSlimefunItem<ItemUseHandler> implements No
         if (entity.getType() != EntityType.PLAYER || p.getWorld().getPVP()) {
             EntityDamageByEntityEvent event =
                     new EntityDamageByEntityEvent(p, entity, DamageCause.ENTITY_ATTACK, DAMAGE);
-            Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
             // Fixes #2207 - Only apply Vector if the Player is able to damage the entity
             if (!event.isCancelled()) {

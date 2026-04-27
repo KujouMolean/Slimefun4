@@ -57,7 +57,7 @@ class GitHubIssuesConnector extends GitHubConnector {
 
     @Override
     public Map<String, Object> getParameters() {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Object> parameters = java.util.Collections.synchronizedMap(new HashMap<>());
         parameters.put("per_page", 100);
         return parameters;
     }

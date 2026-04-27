@@ -37,7 +37,7 @@ public abstract class AbstractEnergyProvider extends SlimefunItem
     /**
      * The set of fuel types for this energy provider.
      */
-    protected final Set<MachineFuel> fuelTypes = new HashSet<>();
+    protected final Set<MachineFuel> fuelTypes = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     /**
      * Constructs a new AbstractEnergyProvider.
@@ -122,12 +122,12 @@ public abstract class AbstractEnergyProvider extends SlimefunItem
 
     @Override
     public List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> list = new ArrayList<>();
+        List<ItemStack> list = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (MachineFuel fuel : fuelTypes) {
             ItemStack item = fuel.getInput().clone();
             ItemMeta im = item.getItemMeta();
-            List<String> lore = new ArrayList<>();
+            List<String> lore = new java.util.concurrent.CopyOnWriteArrayList<>();
             lore.add(ChatColors.color("&8\u21E8 &7持续时间 " + NumberUtils.getTimeLeft(fuel.getTicks() / 2)));
             lore.add(ChatColors.color("&8\u21E8 &e\u26A1 &7" + getEnergyProduction() * 2) + " J/s");
             lore.add(ChatColors.color("&8\u21E8 &e\u26A1 &7最大储存量: "

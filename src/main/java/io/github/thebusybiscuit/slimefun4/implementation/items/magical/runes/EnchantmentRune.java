@@ -46,7 +46,7 @@ public class EnchantmentRune extends SimpleSlimefunItem<ItemDropHandler> {
     public EnchantmentRune(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
 
-        Slimefun.runSync(() -> {
+        com.molean.folia.adapter.Folia.runAtFirstTick(Slimefun.instance(), () -> {
             // Fix: Resolves race condition with third-party enchantment plugins that register custom enchantments
             // asynchronously during server startup.
             // By running this code synchronously after server startup, we ensure all enchantments (including those from
@@ -81,7 +81,7 @@ public class EnchantmentRune extends SimpleSlimefunItem<ItemDropHandler> {
         return (e, p, item) -> {
             if (isItem(item.getItemStack())) {
                 if (canUse(p, true)) {
-                    Slimefun.runSync(
+                    com.molean.folia.adapter.Folia.runSync(
                             () -> {
                                 try {
                                     addRandomEnchantment(p, item);
@@ -89,6 +89,7 @@ public class EnchantmentRune extends SimpleSlimefunItem<ItemDropHandler> {
                                     error("An Exception occurred while trying to apply an Enchantment Rune", x);
                                 }
                             },
+                            p.getPlayer(),
                             20L);
                 }
 
@@ -150,7 +151,7 @@ public class EnchantmentRune extends SimpleSlimefunItem<ItemDropHandler> {
                 // This lightning is just an effect, it deals no damage.
                 l.getWorld().strikeLightningEffect(l);
 
-                Slimefun.runSync(
+                com.molean.folia.adapter.Folia.runSync(
                         () -> {
                             // Being sure entities are still valid and not picked up or whatsoever.
                             if (rune.isValid() && item.isValid() && itemStack.getAmount() == 1) {
@@ -180,6 +181,7 @@ public class EnchantmentRune extends SimpleSlimefunItem<ItemDropHandler> {
                                 l.getWorld().dropItemNaturally(l, itemStack);
                             }
                         },
+                        p.getPlayer(),
                         10L);
             } else {
                 Slimefun.getLocalization().sendMessage(p, "messages.enchantment-rune.fail", true);

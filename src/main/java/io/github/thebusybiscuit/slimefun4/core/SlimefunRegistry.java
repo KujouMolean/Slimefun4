@@ -45,20 +45,21 @@ import org.bukkit.inventory.ItemStack;
  */
 public final class SlimefunRegistry {
 
-    private final Map<String, SlimefunItem> slimefunIds = new HashMap<>();
-    private final List<SlimefunItem> slimefunItems = new ArrayList<>();
-    private final List<SlimefunItem> enabledItems = new ArrayList<>();
+    private final Map<String, SlimefunItem> slimefunIds = java.util.Collections.synchronizedMap(new HashMap<>());
+    private final List<SlimefunItem> slimefunItems = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private final List<SlimefunItem> enabledItems = new java.util.concurrent.CopyOnWriteArrayList<>();
 
-    private final List<ItemGroup> categories = new ArrayList<>();
+    private final List<ItemGroup> categories = new java.util.concurrent.CopyOnWriteArrayList<>();
     private final List<MultiBlock> multiblocks = new LinkedList<>();
 
     private final List<Research> researches = new LinkedList<>();
-    private final List<String> researchRanks = new ArrayList<>();
-    private final Set<UUID> researchingPlayers = Collections.synchronizedSet(new HashSet<>());
+    private final List<String> researchRanks = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private final Set<UUID> researchingPlayers =
+            Collections.synchronizedSet(new java.util.concurrent.CopyOnWriteArraySet<>());
 
-    private final Set<String> tickers = new HashSet<>();
-    private final Set<SlimefunItem> radioactive = new HashSet<>();
-    private final Set<ItemStack> barterDrops = new HashSet<>();
+    private final Set<String> tickers = new java.util.concurrent.CopyOnWriteArraySet<>();
+    private final Set<SlimefunItem> radioactive = new java.util.concurrent.CopyOnWriteArraySet<>();
+    private final Set<ItemStack> barterDrops = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     private NamespacedKey soulboundKey;
     private NamespacedKey itemChargeKey;
@@ -67,13 +68,15 @@ public final class SlimefunRegistry {
     private final KeyMap<GEOResource> geoResources = new KeyMap<>();
 
     private final Map<UUID, PlayerProfile> profiles = new ConcurrentHashMap<>();
-    private final Map<String, BlockInfoConfig> chunks = new HashMap<>();
+    private final Map<String, BlockInfoConfig> chunks = java.util.Collections.synchronizedMap(new HashMap<>());
     private final Map<SlimefunGuideMode, SlimefunGuideImplementation> guides = new EnumMap<>(SlimefunGuideMode.class);
     private final Map<EntityType, Set<ItemStack>> mobDrops = new EnumMap<>(EntityType.class);
 
-    private final Map<String, BlockMenuPreset> blockMenuPresets = new HashMap<>();
+    private final Map<String, BlockMenuPreset> blockMenuPresets =
+            java.util.Collections.synchronizedMap(new HashMap<>());
 
-    private final Map<Class<? extends ItemHandler>, Set<ItemHandler>> globalItemHandlers = new HashMap<>();
+    private final Map<Class<? extends ItemHandler>, Set<ItemHandler>> globalItemHandlers =
+            java.util.Collections.synchronizedMap(new HashMap<>());
 
     public void load(@Nonnull Slimefun plugin) {
         Validate.notNull(plugin, "The Plugin cannot be null!");
@@ -248,7 +251,7 @@ public final class SlimefunRegistry {
     public Set<ItemHandler> getGlobalItemHandlers(@Nonnull Class<? extends ItemHandler> identifier) {
         Validate.notNull(identifier, "The identifier for an ItemHandler cannot be null!");
 
-        return globalItemHandlers.computeIfAbsent(identifier, c -> new HashSet<>());
+        return globalItemHandlers.computeIfAbsent(identifier, c -> new java.util.concurrent.CopyOnWriteArraySet<>());
     }
 
     @Nonnull

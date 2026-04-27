@@ -85,7 +85,7 @@ public class SlimefunProfiler {
      */
     private final AtomicInteger queued = new AtomicInteger(0);
 
-    private final List<SlimefunPoolExecutor> threadPools = new CopyOnWriteArrayList<>();
+    private final List<SlimefunPoolExecutor> threadPools = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private long totalElapsedTime;
 
@@ -275,7 +275,7 @@ public class SlimefunProfiler {
 
     @Nonnull
     protected Map<String, Long> getByItem() {
-        Map<String, Long> map = new HashMap<>();
+        Map<String, Long> map = java.util.Collections.synchronizedMap(new HashMap<>());
 
         for (Map.Entry<ProfiledBlock, Long> entry : timings.entrySet()) {
             map.merge(entry.getKey().getId(), entry.getValue(), Long::sum);
@@ -286,7 +286,7 @@ public class SlimefunProfiler {
 
     @Nonnull
     protected Map<String, Long> getByPlugin() {
-        Map<String, Long> map = new HashMap<>();
+        Map<String, Long> map = java.util.Collections.synchronizedMap(new HashMap<>());
 
         for (Map.Entry<ProfiledBlock, Long> entry : timings.entrySet()) {
             map.merge(entry.getKey().getAddon().getName(), entry.getValue(), Long::sum);
@@ -297,7 +297,7 @@ public class SlimefunProfiler {
 
     @Nonnull
     protected Map<String, Long> getByChunk() {
-        Map<String, Long> map = new HashMap<>();
+        Map<String, Long> map = java.util.Collections.synchronizedMap(new HashMap<>());
 
         for (Map.Entry<ProfiledBlock, Long> entry : timings.entrySet()) {
             ProfiledBlock block = entry.getKey();

@@ -210,7 +210,7 @@ final class CargoUtils {
 
         if (menu != null) {
             var event = new CargoWithdrawEvent(node, target, menu.toInventory());
-            Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
             if (event.isCancelled()) {
                 return null;
             }
@@ -237,7 +237,7 @@ final class CargoUtils {
             }
 
             var event = new CargoWithdrawEvent(node, target, inventory);
-            Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
             if (!event.isCancelled()) {
                 return withdrawFromVanillaInventory(network, node, inventory);
             }
@@ -293,7 +293,7 @@ final class CargoUtils {
                     inventories.put(target.getLocation(), inventory);
                 }
                 var event = new CargoInsertEvent(node, target, inventory);
-                Bukkit.getPluginManager().callEvent(event);
+                com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                 if (!event.isCancelled()) {
                     return insertIntoVanillaInventory(stack, wrapper, smartFill, inventory);
                 }
@@ -303,7 +303,7 @@ final class CargoUtils {
         }
 
         var event = new CargoInsertEvent(node, target, menu.toInventory());
-        Bukkit.getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
         if (event.isCancelled()) {
             return stack;
         }

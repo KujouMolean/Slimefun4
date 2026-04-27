@@ -30,7 +30,7 @@ public class MagicianTalisman extends Talisman {
 
     private final ItemSetting<Boolean> allowEnchantmentBooks =
             new ItemSetting<>(this, "allow-enchantment-books", false);
-    private final Set<TalismanEnchantment> enchantments = new HashSet<>();
+    private final Set<TalismanEnchantment> enchantments = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     @ParametersAreNonnullByDefault
     public MagicianTalisman(SlimefunItemStack item, ItemStack[] recipe) {

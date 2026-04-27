@@ -140,7 +140,7 @@ public class GrindStone extends MultiBlockMachine {
                         Inventory outputInv = findOutputInventory(output, possibleDispenser, inv);
                         MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, current, output);
 
-                        Bukkit.getPluginManager().callEvent(event);
+                        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                         if (event.isCancelled()) {
                             return;
                         }

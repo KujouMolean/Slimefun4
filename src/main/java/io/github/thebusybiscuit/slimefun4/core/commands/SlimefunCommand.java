@@ -28,7 +28,7 @@ public class SlimefunCommand implements CommandExecutor, Listener {
     private boolean registered = false;
     private final Slimefun plugin;
     private final List<SubCommand> commands = new LinkedList<>();
-    private final Map<SubCommand, Integer> commandUsage = new HashMap<>();
+    private final Map<SubCommand, Integer> commandUsage = java.util.Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Creates a new instance of {@link SlimefunCommand}

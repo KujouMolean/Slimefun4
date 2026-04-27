@@ -59,7 +59,7 @@ public class EnhancedCraftingTable extends AbstractCraftingTable {
                             RecipeType.getRecipeOutputList(this, input).clone();
                     MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, input, output);
 
-                    Bukkit.getPluginManager().callEvent(event);
+                    com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                     if (!event.isCancelled() && SlimefunUtils.canPlayerUseItem(p, output, true)) {
                         craft(inv, possibleDispenser, p, b, event.getOutput());
                     }

@@ -42,9 +42,9 @@ public class ButcherAndroidListener implements Listener {
             AndroidInstance obj = (AndroidInstance)
                     e.getEntity().getMetadata(METADATA_KEY).get(0).value();
 
-            Slimefun.runSync(
+            com.molean.folia.adapter.Folia.runSync(
                     () -> {
-                        List<ItemStack> items = new ArrayList<>();
+                        List<ItemStack> items = new java.util.concurrent.CopyOnWriteArrayList<>();
 
                         // Collect any nearby dropped items
                         for (Entity n : e.getEntity().getNearbyEntities(0.5D, 0.5D, 0.5D)) {
@@ -62,6 +62,7 @@ public class ButcherAndroidListener implements Listener {
                                 .spawnEntity(e.getEntity().getLocation(), EntityType.EXPERIENCE_ORB);
                         exp.setExperience(1 + ThreadLocalRandom.current().nextInt(6));
                     },
+                    e.getEntity(),
                     1L);
 
             // Removing metadata to prevent memory leaks

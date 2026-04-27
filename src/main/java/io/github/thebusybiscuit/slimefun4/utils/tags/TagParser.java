@@ -96,7 +96,7 @@ public class TagParser implements Keyed {
 
         try {
             Set<Material> materials = EnumSet.noneOf(Material.class);
-            Set<Tag<Material>> tags = new HashSet<>();
+            Set<Tag<Material>> tags = new java.util.concurrent.CopyOnWriteArraySet<>();
 
             JsonObject root = JsonUtils.parseString(json).getAsJsonObject();
             JsonElement child = root.get("values");

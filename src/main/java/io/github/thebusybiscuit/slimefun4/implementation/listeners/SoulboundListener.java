@@ -24,15 +24,32 @@ import org.bukkit.inventory.ItemStack;
  */
 public class SoulboundListener implements Listener {
 
-    private final Map<UUID, Map<Integer, ItemStack>> soulbound = new HashMap<>();
+    private final Map<UUID, Map<Integer, ItemStack>> soulbound = java.util.Collections.synchronizedMap(new HashMap<>());
 
     public SoulboundListener(@Nonnull Slimefun plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        com.molean.folia.adapter.Folia.getScheduler()
+                .runTaskTimerAsynchronously(
+                        plugin,
+                        () -> {
+                            for (Player onlinePlayer : org.bukkit.Bukkit.getOnlinePlayers()) {
+                                if (soulbound.containsKey(onlinePlayer.getUniqueId())) {
+                                    com.molean.folia.adapter.Folia.getScheduler()
+                                            .runTask(plugin, onlinePlayer, () -> {
+                                                if (!onlinePlayer.isDead()) {
+                                                    returnSoulboundItems(onlinePlayer);
+                                                }
+                                            });
+                                }
+                            }
+                        },
+                        20,
+                        20);
     }
 
     @EventHandler
     public void onDamage(PlayerDeathEvent e) {
-        Map<Integer, ItemStack> items = new HashMap<>();
+        Map<Integer, ItemStack> items = java.util.Collections.synchronizedMap(new HashMap<>());
         Player p = e.getEntity();
 
         for (int slot = 0; slot < p.getInventory().getSize(); slot++) {

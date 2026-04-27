@@ -35,7 +35,7 @@ class SlimefunItemRecipe extends AbstractRecipe {
 
     @Nonnull
     private static Collection<Predicate<ItemStack>> getInputs(@Nonnull SlimefunItem item) {
-        List<Predicate<ItemStack>> predicates = new ArrayList<>();
+        List<Predicate<ItemStack>> predicates = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (int i = 0; i < 9; i++) {
             ItemStack ingredient = item.getRecipe()[i];

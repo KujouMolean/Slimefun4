@@ -809,7 +809,7 @@ public final class SlimefunItems {
     public static final SlimefunItemStack REINFORCED_ALLOY_BOOTS =
             new SlimefunItemStack("REINFORCED_ALLOY_BOOTS", Material.IRON_BOOTS, "&b强化合金靴子");
 
-    private static final List<String> hazmatLore = new ArrayList<>();
+    private static final List<String> hazmatLore = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     static {
         hazmatLore.add("");
@@ -905,7 +905,7 @@ public final class SlimefunItems {
             "&9+ 减免摔落伤害");
 
     static {
-        Map<Enchantment, Integer> cactusEnchs = new HashMap<>();
+        Map<Enchantment, Integer> cactusEnchs = java.util.Collections.synchronizedMap(new HashMap<>());
         cactusEnchs.put(Enchantment.THORNS, 3);
         cactusEnchs.put(VersionedEnchantment.UNBREAKING, 6);
 
@@ -914,7 +914,7 @@ public final class SlimefunItems {
         CACTUS_LEGGINGS.addUnsafeEnchantments(cactusEnchs);
         CACTUS_BOOTS.addUnsafeEnchantments(cactusEnchs);
 
-        Map<Enchantment, Integer> damascusEnchs = new HashMap<>();
+        Map<Enchantment, Integer> damascusEnchs = java.util.Collections.synchronizedMap(new HashMap<>());
         damascusEnchs.put(VersionedEnchantment.UNBREAKING, 5);
         damascusEnchs.put(VersionedEnchantment.PROTECTION, 5);
 
@@ -923,7 +923,7 @@ public final class SlimefunItems {
         DAMASCUS_STEEL_LEGGINGS.addUnsafeEnchantments(damascusEnchs);
         DAMASCUS_STEEL_BOOTS.addUnsafeEnchantments(damascusEnchs);
 
-        Map<Enchantment, Integer> reinforcedEnchs = new HashMap<>();
+        Map<Enchantment, Integer> reinforcedEnchs = java.util.Collections.synchronizedMap(new HashMap<>());
         reinforcedEnchs.put(VersionedEnchantment.UNBREAKING, 9);
         reinforcedEnchs.put(VersionedEnchantment.PROTECTION, 9);
 
@@ -932,7 +932,7 @@ public final class SlimefunItems {
         REINFORCED_ALLOY_LEGGINGS.addUnsafeEnchantments(reinforcedEnchs);
         REINFORCED_ALLOY_BOOTS.addUnsafeEnchantments(reinforcedEnchs);
 
-        Map<Enchantment, Integer> gildedEnchs = new HashMap<>();
+        Map<Enchantment, Integer> gildedEnchs = java.util.Collections.synchronizedMap(new HashMap<>());
         gildedEnchs.put(VersionedEnchantment.UNBREAKING, 6);
         gildedEnchs.put(VersionedEnchantment.PROTECTION, 8);
 
@@ -946,7 +946,7 @@ public final class SlimefunItems {
         GOLDEN_LEGGINGS_12K.addUnsafeEnchantment(VersionedEnchantment.UNBREAKING, 10);
         GOLDEN_BOOTS_12K.addUnsafeEnchantment(VersionedEnchantment.UNBREAKING, 10);
 
-        Map<Enchantment, Integer> slimeEnchs = new HashMap<>();
+        Map<Enchantment, Integer> slimeEnchs = java.util.Collections.synchronizedMap(new HashMap<>());
         slimeEnchs.put(VersionedEnchantment.UNBREAKING, 4);
         slimeEnchs.put(VersionedEnchantment.PROTECTION, 2);
 
@@ -955,7 +955,7 @@ public final class SlimefunItems {
         SLIME_LEGGINGS_STEEL.addUnsafeEnchantments(slimeEnchs);
         SLIME_BOOTS_STEEL.addUnsafeEnchantments(slimeEnchs);
 
-        Map<Enchantment, Integer> beeEnchs = new HashMap<>();
+        Map<Enchantment, Integer> beeEnchs = java.util.Collections.synchronizedMap(new HashMap<>());
         beeEnchs.put(VersionedEnchantment.UNBREAKING, 4);
         beeEnchs.put(VersionedEnchantment.PROTECTION, 2);
 

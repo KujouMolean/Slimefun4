@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ItemInteractionResult extends InteractionResult {
 
-    private final @Nonnull Set<ItemStack> resultItems = new HashSet<>();
+    private final @Nonnull Set<ItemStack> resultItems = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     /**
      * Creates a new InteractionResult.

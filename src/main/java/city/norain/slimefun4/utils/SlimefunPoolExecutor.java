@@ -17,7 +17,7 @@ public class SlimefunPoolExecutor extends ThreadPoolExecutor {
     private final String name;
 
     @Getter
-    private final List<Long> runningThreads = new CopyOnWriteArrayList<>();
+    private final List<Long> runningThreads = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     public SlimefunPoolExecutor(
             String name,

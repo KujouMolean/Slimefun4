@@ -65,7 +65,7 @@ public class PressureChamber extends MultiBlockMachine {
                         Inventory outputInv = findOutputInventory(output, possibleDispenser, inv);
                         MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, current, output);
 
-                        Bukkit.getPluginManager().callEvent(event);
+                        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                         if (event.isCancelled()) {
                             return;
                         }
@@ -93,7 +93,7 @@ public class PressureChamber extends MultiBlockMachine {
         for (int i = 0; i < 4; i++) {
             int j = i;
 
-            Slimefun.runSync(
+            com.molean.folia.adapter.Folia.runSync(
                     () -> {
                         SoundEffect.PRESSURE_CHAMBER_WORKING_SOUND.playAt(b);
                         p.getWorld().playEffect(b.getRelative(BlockFace.UP).getLocation(), Effect.SMOKE, 4);
@@ -107,6 +107,7 @@ public class PressureChamber extends MultiBlockMachine {
                             handleCraftedItem(output, dispenser, dispInv);
                         }
                     },
+                    p,
                     i * 20L);
         }
     }

@@ -137,7 +137,7 @@ public class BlockListener implements Listener {
                 optimizePlacement(sfItem, block, e.getPlayer().getLocation());
 
                 var placeEvent = new SlimefunBlockPlaceEvent(e.getPlayer(), item, block, sfItem);
-                Bukkit.getPluginManager().callEvent(placeEvent);
+                com.molean.folia.adapter.Folia.getPluginManager().ce(placeEvent);
 
                 if (placeEvent.isCancelled()) {
                     e.setCancelled(true);
@@ -184,7 +184,7 @@ public class BlockListener implements Listener {
         if (blockData != null) {
             SlimefunBlockBreakEvent breakEvent =
                     new SlimefunBlockBreakEvent(e.getPlayer(), heldItem, e.getBlock(), sfItem);
-            Bukkit.getPluginManager().callEvent(breakEvent);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(breakEvent);
 
             if (breakEvent.isCancelled()) {
                 e.setCancelled(true);
@@ -192,7 +192,7 @@ public class BlockListener implements Listener {
             }
         }
 
-        List<ItemStack> drops = new ArrayList<>();
+        List<ItemStack> drops = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         if (!heldItem.getType().isAir()) {
             int fortune = getBonusDropsWithFortune(heldItem, e.getBlock());
@@ -226,7 +226,8 @@ public class BlockListener implements Listener {
                             e.setDropItems(true);
                             dropItems(e, heldItem, block, sfItem, drops);
                         },
-                        true);
+                        com.molean.folia.adapter.SchedulerContext.of(
+                                e.getPlayer().getLocation()));
                 return;
             }
 
@@ -339,8 +340,8 @@ public class BlockListener implements Listener {
                     blockData.setPendingRemove(true);
                     controller.loadDataAsync(blockData, new IAsyncReadCallback<>() {
                         @Override
-                        public boolean runOnMainThread() {
-                            return true;
+                        public com.molean.folia.adapter.SchedulerContext getContext() {
+                            return com.molean.folia.adapter.SchedulerContext.of(loc);
                         }
 
                         @Override

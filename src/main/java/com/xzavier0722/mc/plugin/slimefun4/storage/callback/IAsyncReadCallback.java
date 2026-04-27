@@ -13,8 +13,8 @@ import java.util.function.Consumer;
  * @param <T> the type of result returned by the callback
  */
 public interface IAsyncReadCallback<T> {
-    default boolean runOnMainThread() {
-        return false;
+    default com.molean.folia.adapter.SchedulerContext getContext() {
+        return com.molean.folia.adapter.SchedulerContext.ofGlobal();
     }
 
     default void onResult(T result) {}

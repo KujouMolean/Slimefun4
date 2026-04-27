@@ -80,7 +80,7 @@ public class MinerAndroid extends ProgrammableAndroid {
 
             if (Slimefun.getProtectionManager().hasPermission(owner, block.getLocation(), Interaction.BREAK_BLOCK)) {
                 AndroidMineEvent event = new AndroidMineEvent(block, new AndroidInstance(this, b));
-                Bukkit.getPluginManager().callEvent(event);
+                com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
                 if (event.isCancelled()) {
                     return;
@@ -103,7 +103,7 @@ public class MinerAndroid extends ProgrammableAndroid {
 
             if (Slimefun.getProtectionManager().hasPermission(owner, block.getLocation(), Interaction.BREAK_BLOCK)) {
                 AndroidMineEvent event = new AndroidMineEvent(block, new AndroidInstance(this, b));
-                Bukkit.getPluginManager().callEvent(event);
+                com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
                 if (event.isCancelled()) {
                     return;

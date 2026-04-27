@@ -43,8 +43,8 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class IndustrialMiner extends MultiBlockMachine {
 
-    protected final Map<Location, MiningTask> activeMiners = new HashMap<>();
-    protected final List<MachineFuel> fuelTypes = new ArrayList<>();
+    protected final Map<Location, MiningTask> activeMiners = java.util.Collections.synchronizedMap(new HashMap<>());
+    protected final List<MachineFuel> fuelTypes = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private final OreDictionary oreDictionary;
     private final ItemSetting<Boolean> canMineAncientDebris = new ItemSetting<>(this, "can-mine-ancient-debris", false);
@@ -164,12 +164,12 @@ public class IndustrialMiner extends MultiBlockMachine {
 
     @Override
     public @Nonnull List<ItemStack> getDisplayRecipes() {
-        List<ItemStack> list = new ArrayList<>();
+        List<ItemStack> list = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (MachineFuel fuel : fuelTypes) {
             ItemStack item = fuel.getInput().clone();
             ItemMeta im = item.getItemMeta();
-            List<String> lore = new ArrayList<>();
+            List<String> lore = new java.util.concurrent.CopyOnWriteArrayList<>();
             lore.add(ChatColors.color("&8\u21E8 &7剩余最多 " + fuel.getTicks() + " 个矿石"));
             im.setLore(lore);
             item.setItemMeta(im);

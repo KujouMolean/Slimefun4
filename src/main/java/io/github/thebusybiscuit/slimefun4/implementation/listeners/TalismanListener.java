@@ -291,7 +291,7 @@ public class TalismanListener implements Listener {
             int itemSlot = slot;
 
             // Update the item forcefully
-            Slimefun.runSync(() -> inv.setItem(itemSlot, item), 1L);
+            com.molean.folia.adapter.Folia.runSync(() -> inv.setItem(itemSlot, item), e.getPlayer(), 1L);
         }
     }
 

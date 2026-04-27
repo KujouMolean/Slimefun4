@@ -50,9 +50,10 @@ import org.bukkit.inventory.ItemStack;
  */
 public class BackpackListener implements Listener {
     // Stores the player uuid maps to the opening backpack uuid
-    private final Set<UUID> openingPlayers = new HashSet<>();
-    private final Map<UUID, UUID> backpacks = new HashMap<>();
-    private final Map<UUID, SlimefunBackpack> backpackInstances = new HashMap<>();
+    private final Set<UUID> openingPlayers = java.util.Collections.synchronizedSet(new HashSet<>());
+    private final Map<UUID, UUID> backpacks = java.util.Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, SlimefunBackpack> backpackInstances =
+            java.util.Collections.synchronizedMap(new HashMap<>());
 
     public void register(@Nonnull Slimefun plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -253,8 +254,8 @@ public class BackpackListener implements Listener {
         }
         openingPlayers.add(p.getUniqueId());
         PlayerBackpack.getAsync(item)
-                .thenAcceptAsync(
-                        bp -> {
+                .thenAcceptAsync(bp -> com.molean.folia.adapter.Folia.runSync(
+                        () -> {
                             openingPlayers.remove(p.getUniqueId());
                             // Check if the backpack item contains invalid backpack data
                             if (bp == null || bp.isInvalid()) {
@@ -271,6 +272,6 @@ public class BackpackListener implements Listener {
                             backpacks.put(p.getUniqueId(), bp.getUniqueId());
                             backpackInstances.put(p.getUniqueId(), backpackItem);
                         },
-                        ThreadUtils.getMainThreadExecutor());
+                        p));
     }
 }

@@ -128,8 +128,8 @@ public class ResourceManager {
     public void getSuppliesAsync(GEOResource resource, Chunk chunk, IAsyncReadCallback<Integer> callback) {
         Slimefun.getDatabaseManager().getBlockDataController().getChunkDataAsync(chunk, new IAsyncReadCallback<>() {
             @Override
-            public boolean runOnMainThread() {
-                return callback.runOnMainThread();
+            public com.molean.folia.adapter.SchedulerContext getContext() {
+                return callback.getContext();
             }
 
             @Override
@@ -226,7 +226,7 @@ public class ResourceManager {
 
         // Fire an event, so that plugins can modify this.
         GEOResourceGenerationEvent event = new GEOResourceGenerationEvent(world, biome, x, z, resource, value);
-        Bukkit.getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
         value = event.getValue();
 
         setSupplies(resource, world, x, z, value);
@@ -284,7 +284,7 @@ public class ResourceManager {
         int index = 10;
         int pages = (int) (Math.ceil((double) resources.size() / 28) + 1);
 
-        Map<GEOResource, Integer> supplyMap = new HashMap<>();
+        Map<GEOResource, Integer> supplyMap = java.util.Collections.synchronizedMap(new HashMap<>());
 
         // if resource is not generated, generate the first
         resources.forEach(resource -> {

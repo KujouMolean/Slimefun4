@@ -44,7 +44,7 @@ public class WindStaff extends SimpleSlimefunItem<ItemUseHandler> {
                 // The isItem() check is here to prevent the MultiTool from consuming hunger
                 if (isItem(e.getItem()) && p.getGameMode() != GameMode.CREATIVE) {
                     FoodLevelChangeEvent event = new FoodLevelChangeEvent(p, p.getFoodLevel() - 2);
-                    Bukkit.getPluginManager().callEvent(event);
+                    com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
                     if (!event.isCancelled()) {
                         p.setFoodLevel(event.getFoodLevel());

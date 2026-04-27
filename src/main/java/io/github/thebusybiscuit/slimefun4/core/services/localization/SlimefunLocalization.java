@@ -430,7 +430,7 @@ public abstract class SlimefunLocalization implements Keyed {
     }
 
     protected @Nonnull Set<String> getKeys(@Nonnull FileConfiguration... files) {
-        Set<String> keys = new HashSet<>();
+        Set<String> keys = new java.util.concurrent.CopyOnWriteArraySet<>();
 
         for (FileConfiguration cfg : files) {
             keys.addAll(cfg.getKeys(true));

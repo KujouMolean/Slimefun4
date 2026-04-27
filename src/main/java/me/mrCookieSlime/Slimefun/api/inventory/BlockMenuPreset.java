@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
 // This class will be deprecated, relocated and rewritten in a future version.
 public abstract class BlockMenuPreset extends ChestMenu {
 
-    protected final Set<Integer> occupiedSlots = new HashSet<>();
+    protected final Set<Integer> occupiedSlots = new java.util.concurrent.CopyOnWriteArraySet<>();
     private final String inventoryTitle;
     private final String id;
 
@@ -173,7 +173,7 @@ public abstract class BlockMenuPreset extends ChestMenu {
 
     @Nonnull
     public Set<Integer> getInventorySlots() {
-        Set<Integer> emptySlots = new HashSet<>();
+        Set<Integer> emptySlots = new java.util.concurrent.CopyOnWriteArraySet<>();
 
         if (isSizeAutomaticallyInferred()) {
             for (int i = 0; i < toInventory().getSize(); i++) {
@@ -220,15 +220,17 @@ public abstract class BlockMenuPreset extends ChestMenu {
     public void newInstance(@Nonnull BlockMenu menu, @Nonnull Location l) {
         Validate.notNull(l, "Cannot create a new BlockMenu without a Location");
 
-        Slimefun.runSync(() -> {
-            locked = true;
+        com.molean.folia.adapter.Folia.runSync(
+                () -> {
+                    locked = true;
 
-            try {
-                newInstance(menu, l.getBlock());
-            } catch (Exception | LinkageError x) {
-                getSlimefunItem().error("An Error occurred while trying to create a BlockMenu", x);
-            }
-        });
+                    try {
+                        newInstance(menu, l.getBlock());
+                    } catch (Exception | LinkageError x) {
+                        getSlimefunItem().error("An Error occurred while trying to create a BlockMenu", x);
+                    }
+                },
+                l);
     }
 
     /**

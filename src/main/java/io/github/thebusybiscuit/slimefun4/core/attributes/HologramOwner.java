@@ -45,12 +45,14 @@ public interface HologramOwner extends ItemAttribute {
             return;
         }
 
-        Slimefun.runSync(() -> {
-            if (abort.get()) {
-                return;
-            }
-            updateHologram(b, text);
-        });
+        com.molean.folia.adapter.Folia.runSync(
+                () -> {
+                    if (abort.get()) {
+                        return;
+                    }
+                    updateHologram(b, text);
+                },
+                b.getLocation());
     }
 
     /**

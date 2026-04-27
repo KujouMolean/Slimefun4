@@ -42,6 +42,6 @@ class GitHubActivityConnector extends GitHubConnector {
 
     @Override
     public Map<String, Object> getParameters() {
-        return new HashMap<>();
+        return java.util.Collections.synchronizedMap(new HashMap<>());
     }
 }

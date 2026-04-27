@@ -38,11 +38,11 @@ public abstract class Network {
      */
     protected Location regulator;
 
-    private final Queue<Location> nodeQueue = new ArrayDeque<>();
-    protected final Set<Location> connectedLocations = new HashSet<>();
-    protected final Set<Location> regulatorNodes = new HashSet<>();
-    protected final Set<Location> connectorNodes = new HashSet<>();
-    protected final Set<Location> terminusNodes = new HashSet<>();
+    private final Queue<Location> nodeQueue = new java.util.concurrent.ConcurrentLinkedQueue<>();
+    protected final Set<Location> connectedLocations = new java.util.concurrent.CopyOnWriteArraySet<>();
+    protected final Set<Location> regulatorNodes = new java.util.concurrent.CopyOnWriteArraySet<>();
+    protected final Set<Location> connectorNodes = new java.util.concurrent.CopyOnWriteArraySet<>();
+    protected final Set<Location> terminusNodes = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     /**
      * This constructs a new {@link Network} at the given {@link Location}.
@@ -227,7 +227,8 @@ public abstract class Network {
      */
     public void display() {
         if (manager.isVisualizerEnabled()) {
-            Slimefun.runSync(new NetworkVisualizer(this, Color.BLUE));
+            com.molean.folia.adapter.Folia.getScheduler()
+                    .runTaskAsynchronously(Slimefun.instance(), new NetworkVisualizer(this, Color.BLUE));
         }
     }
 

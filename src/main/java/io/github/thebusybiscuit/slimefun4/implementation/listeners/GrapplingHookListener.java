@@ -44,8 +44,9 @@ public class GrapplingHookListener implements Listener {
 
     private GrapplingHook grapplingHook;
 
-    private final Map<UUID, GrapplingHookEntity> activeHooks = new HashMap<>();
-    private final Set<UUID> invulnerability = new HashSet<>();
+    private final Map<org.bukkit.entity.Entity, GrapplingHookEntity> activeHooks =
+            java.util.Collections.synchronizedMap(new HashMap<>());
+    private final Set<org.bukkit.entity.Entity> invulnerability = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     public void register(@Nonnull Slimefun plugin, @Nonnull GrapplingHook grapplingHook) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -70,12 +71,13 @@ public class GrapplingHookListener implements Listener {
             return;
         }
 
-        Slimefun.runSync(
+        com.molean.folia.adapter.Folia.runSync(
                 () -> {
                     if (e.getEntity() instanceof Arrow arrow) {
                         handleGrapplingHook(arrow);
                     }
                 },
+                e.getEntity(),
                 2L);
     }
 
@@ -173,23 +175,22 @@ public class GrapplingHookListener implements Listener {
 
     private void handleGrapplingHook(@Nullable Arrow arrow) {
         if (arrow != null && arrow.isValid() && arrow.getShooter() instanceof Player player) {
-            GrapplingHookEntity hook = activeHooks.get(player.getUniqueId());
+            GrapplingHookEntity hook = activeHooks.get(player);
 
             if (hook != null) {
                 Location target = arrow.getLocation();
                 hook.drop(target);
 
-                Vector velocity = new Vector(0.0, 0.2, 0.0);
-
                 if (player.getLocation().distance(target) < 3.0) {
+                    Vector velocity = new Vector(0.0, 0.2, 0.0);
                     if (target.getY() <= player.getLocation().getY()) {
                         velocity =
                                 target.toVector().subtract(player.getLocation().toVector());
                     }
+                    player.setVelocity(velocity);
                 } else {
                     Location l = player.getLocation();
                     l.setY(l.getY() + 0.5);
-                    player.teleport(l);
 
                     double g = -0.08;
                     double d = target.distance(l);
@@ -198,21 +199,23 @@ public class GrapplingHookListener implements Listener {
                     double vY = (1.0 + 0.04 * t) * (target.getY() - l.getY()) / t - 0.5D * g * t;
                     double vZ = (1.0 + 0.08 * t) * (target.getZ() - l.getZ()) / t;
 
-                    velocity = player.getVelocity();
-                    velocity.setX(vX);
-                    velocity.setY(vY);
-                    velocity.setZ(vZ);
+                    Vector v = player.getVelocity();
+                    v.setX(vX);
+                    v.setY(vY);
+                    v.setZ(vZ);
+
+                    player.teleportAsync(l).thenAccept(aBoolean -> {
+                        player.setVelocity(v);
+                    });
                 }
 
-                player.setVelocity(velocity);
-
                 hook.remove();
-                Slimefun.runSync(() -> activeHooks.remove(player.getUniqueId()), 20L);
+                com.molean.folia.adapter.Folia.runSync(() -> activeHooks.remove(player), player, 20L);
             }
         }
     }
 
-    public boolean isGrappling(@Nonnull UUID uuid) {
+    public boolean isGrappling(@Nonnull org.bukkit.entity.Entity uuid) {
         return activeHooks.containsKey(uuid);
     }
 
@@ -220,12 +223,12 @@ public class GrapplingHookListener implements Listener {
     public void addGrapplingHook(
             Player p, Arrow arrow, Bat bat, boolean dropItem, long despawnTicks, boolean wasConsumed) {
         GrapplingHookEntity hook = new GrapplingHookEntity(p, arrow, bat, dropItem, wasConsumed);
-        UUID uuid = p.getUniqueId();
+        Player uuid = p;
 
-        activeHooks.put(uuid, hook);
+        activeHooks.put(p, hook);
 
         // To fix issue #253
-        Slimefun.runSync(
+        com.molean.folia.adapter.Folia.runSync(
                 () -> {
                     GrapplingHookEntity entity = activeHooks.get(uuid);
 
@@ -233,14 +236,16 @@ public class GrapplingHookListener implements Listener {
                         Slimefun.getBowListener().getProjectileData().remove(uuid);
                         entity.remove();
 
-                        Slimefun.runSync(
+                        com.molean.folia.adapter.Folia.runSync(
                                 () -> {
                                     activeHooks.remove(uuid);
                                     invulnerability.remove(uuid);
                                 },
+                                uuid,
                                 20L);
                     }
                 },
+                uuid,
                 despawnTicks);
     }
 }

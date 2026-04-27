@@ -54,10 +54,10 @@ public class AncientAltarListener implements Listener {
     private AncientAltar altarItem;
     private AncientPedestal pedestalItem;
 
-    private final Set<Location> altarsInUse = new HashSet<>();
+    private final Set<Location> altarsInUse = new java.util.concurrent.CopyOnWriteArraySet<>();
 
-    private final List<Block> altars = new ArrayList<>();
-    private final Set<UUID> removedItems = new HashSet<>();
+    private final List<Block> altars = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private final Set<org.bukkit.entity.Entity> removedItems = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     @ParametersAreNonnullByDefault
     public AncientAltarListener(Slimefun plugin, AncientAltar altar, AncientPedestal pedestal) {
@@ -148,10 +148,11 @@ public class AncientAltarListener implements Listener {
             }
         } else if (!removedItems.contains(stack.get().getUniqueId())) {
             Item entity = stack.get();
-            UUID uuid = entity.getUniqueId();
+            org.bukkit.entity.Entity uuid = entity;
             removedItems.add(uuid);
 
-            Slimefun.runSync(() -> removedItems.remove(uuid), 30L);
+            com.molean.folia.adapter.Folia.getScheduler()
+                    .runTaskLaterAsync(Slimefun.instance(), () -> removedItems.remove(uuid), 30L);
 
             entity.remove();
             SoundEffect.ANCIENT_ALTAR_ITEM_PICK_UP_SOUND.playFor(p);
@@ -216,7 +217,7 @@ public class AncientAltarListener implements Listener {
 
     @ParametersAreNonnullByDefault
     private void startRitual(Player p, Block b, List<Block> pedestals, ItemStack catalyst) {
-        List<ItemStack> input = new ArrayList<>();
+        List<ItemStack> input = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (Block pedestal : pedestals) {
             Optional<Item> stack = pedestalItem.getPlacedItem(pedestal);
@@ -228,7 +229,7 @@ public class AncientAltarListener implements Listener {
 
         if (result.isPresent()) {
             if (SlimefunUtils.canPlayerUseItem(p, result.get(), true)) {
-                List<ItemStack> consumed = new ArrayList<>();
+                List<ItemStack> consumed = new java.util.concurrent.CopyOnWriteArrayList<>();
                 consumed.add(catalyst);
 
                 if (p.getGameMode() != GameMode.CREATIVE) {
@@ -239,7 +240,7 @@ public class AncientAltarListener implements Listener {
 
                 AncientAltarTask task =
                         new AncientAltarTask(this, b, altarItem.getStepDelay(), result.get(), pedestals, consumed, p);
-                Slimefun.runSync(task, 10L);
+                com.molean.folia.adapter.Folia.runSync(task, p, 10L);
             } else {
                 altars.remove(b);
 
@@ -284,7 +285,7 @@ public class AncientAltarListener implements Listener {
     }
 
     private @Nonnull List<Block> getPedestals(@Nonnull Block altar) {
-        List<Block> list = new ArrayList<>();
+        List<Block> list = new java.util.concurrent.CopyOnWriteArrayList<>();
         var id = pedestalItem.getId();
 
         if (StorageCacheUtils.isBlock(altar.getRelative(2, 0, -2).getLocation(), id)) {

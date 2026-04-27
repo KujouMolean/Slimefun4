@@ -54,7 +54,7 @@ public abstract class AbstractArmorTask implements Runnable {
                             new Object[] {getClass().getSimpleName(), tickInterval});
         }
 
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this, 0L, tickInterval);
+        com.molean.folia.adapter.Folia.getScheduler().runTaskTimerAsynchronously(plugin, this, 0L, tickInterval);
     }
 
     /**

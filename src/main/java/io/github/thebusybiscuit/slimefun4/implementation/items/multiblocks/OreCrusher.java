@@ -202,7 +202,7 @@ public class OreCrusher extends MultiBlockMachine {
                         Inventory outputInv = findOutputInventory(adding, possibleDispenser, inv);
                         MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, current, adding);
 
-                        Bukkit.getPluginManager().callEvent(event);
+                        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                         if (!event.isCancelled() && SlimefunUtils.canPlayerUseItem(p, adding, true)) {
                             if (outputInv != null) {
                                 ItemStack removing = current.clone();

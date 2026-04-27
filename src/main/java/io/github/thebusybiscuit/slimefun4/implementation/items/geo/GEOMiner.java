@@ -336,7 +336,11 @@ public class GEOMiner extends SlimefunItem
             if (chunkData.getAllData().isEmpty()) {
                 updateHologram(b, "&4需要先进行地形扫描!");
             } else {
-                start(b, inv);
+                com.molean.folia.adapter.Folia.runSync(
+                        () -> {
+                            start(b, inv);
+                        },
+                        b.getLocation());
             }
         } else {
             // load chunk

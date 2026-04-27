@@ -280,7 +280,7 @@ public enum SlimefunTag implements Tag<Material> {
     /**
      * Lookup table for tag names.
      */
-    private static final Map<String, SlimefunTag> nameLookup = new HashMap<>();
+    private static final Map<String, SlimefunTag> nameLookup = java.util.Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Speed up lookups by caching the values instead of creating a new array
@@ -296,7 +296,7 @@ public enum SlimefunTag implements Tag<Material> {
 
     private final NamespacedKey key;
     private final Set<Material> includedMaterials = EnumSet.noneOf(Material.class);
-    private final Set<Tag<Material>> additionalTags = new HashSet<>();
+    private final Set<Tag<Material>> additionalTags = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     /**
      * This constructs a new {@link SlimefunTag}.

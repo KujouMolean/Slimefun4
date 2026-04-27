@@ -104,7 +104,7 @@ public class Talisman extends SlimefunItem {
 
         if (!(this instanceof EnderTalisman)) {
             String name = "&5末影" + ChatColor.stripColor(getItem().getItemMeta().getDisplayName());
-            List<String> lore = new ArrayList<>();
+            List<String> lore = new java.util.concurrent.CopyOnWriteArrayList<>();
             lore.add("&7&o注入末影精华");
             lore.add("");
 
@@ -242,7 +242,7 @@ public class Talisman extends SlimefunItem {
     private static void activateTalisman(
             Event e, Player p, Inventory inv, Talisman talisman, ItemStack talismanItem, boolean sendMessage) {
         TalismanActivateEvent talismanEvent = new TalismanActivateEvent(p, talisman, talismanItem);
-        Bukkit.getPluginManager().callEvent(talismanEvent);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(talismanEvent);
         if (!talismanEvent.isCancelled()) {
             if (!talismanEvent.preventsConsumption()) {
                 consumeItem(inv, talisman, talismanItem);

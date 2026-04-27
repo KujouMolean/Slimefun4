@@ -38,7 +38,7 @@ public class ItemGroup implements Keyed {
 
     private SlimefunAddon addon;
 
-    protected final List<SlimefunItem> items = new ArrayList<>();
+    protected final List<SlimefunItem> items = new java.util.concurrent.CopyOnWriteArrayList<>();
     protected final NamespacedKey key;
     protected final ItemStack item;
     protected int tier;

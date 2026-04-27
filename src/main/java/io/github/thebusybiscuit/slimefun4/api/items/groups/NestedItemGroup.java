@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 public class NestedItemGroup extends FlexItemGroup {
 
     private static final int GROUP_SIZE = 36;
-    private final List<SubItemGroup> subGroups = new ArrayList<>();
+    private final List<SubItemGroup> subGroups = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     @ParametersAreNonnullByDefault
     public NestedItemGroup(NamespacedKey key, ItemStack item) {

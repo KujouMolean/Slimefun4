@@ -46,7 +46,7 @@ public final class ChargeUtils {
         NamespacedKey key = Slimefun.getRegistry().getItemChargeDataKey();
         meta.getPersistentDataContainer().set(key, PersistentDataType.FLOAT, value);
 
-        List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
+        List<String> lore = meta.hasLore() ? meta.getLore() : new java.util.concurrent.CopyOnWriteArrayList<>();
         for (int i = 0; i < lore.size(); i++) {
             String line = lore.get(i);
 

@@ -50,7 +50,7 @@ class VanillaRecipe extends AbstractRecipe {
 
     @Nonnull
     private static Collection<Predicate<ItemStack>> getChoices(@Nonnull ShapedRecipe recipe) {
-        List<Predicate<ItemStack>> choices = new ArrayList<>();
+        List<Predicate<ItemStack>> choices = new java.util.concurrent.CopyOnWriteArrayList<>();
 
         for (String row : recipe.getShape()) {
             for (char c : row.toCharArray()) {

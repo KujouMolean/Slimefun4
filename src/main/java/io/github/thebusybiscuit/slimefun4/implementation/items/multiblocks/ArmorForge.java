@@ -58,7 +58,7 @@ public class ArmorForge extends AbstractCraftingTable {
                             RecipeType.getRecipeOutputList(this, input).clone();
                     MultiBlockCraftEvent event = new MultiBlockCraftEvent(p, this, input, output);
 
-                    Bukkit.getPluginManager().callEvent(event);
+                    com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                     if (!event.isCancelled() && SlimefunUtils.canPlayerUseItem(p, output, true)) {
                         craft(p, event.getOutput(), inv, possibleDispenser);
                     }
@@ -108,7 +108,7 @@ public class ArmorForge extends AbstractCraftingTable {
             for (int j = 0; j < 4; j++) {
                 int current = j;
 
-                Slimefun.runSync(
+                com.molean.folia.adapter.Folia.runSync(
                         () -> {
                             if (current < 3) {
                                 SoundEffect.ARMOR_FORGE_WORKING_SOUND.playAt(dispenser);
@@ -117,6 +117,7 @@ public class ArmorForge extends AbstractCraftingTable {
                                 handleCraftedItem(output, dispenser, inv);
                             }
                         },
+                        p,
                         j * 20L);
             }
 

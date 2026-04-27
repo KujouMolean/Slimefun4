@@ -42,10 +42,10 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
 
     private static final int RANGE = 5;
 
-    private final Set<Location> inputNodes = new HashSet<>();
-    private final Set<Location> outputNodes = new HashSet<>();
+    private final Set<Location> inputNodes = new java.util.concurrent.CopyOnWriteArraySet<>();
+    private final Set<Location> outputNodes = new java.util.concurrent.CopyOnWriteArraySet<>();
 
-    protected final Map<Location, Integer> roundRobin = new HashMap<>();
+    protected final Map<Location, Integer> roundRobin = java.util.Collections.synchronizedMap(new HashMap<>());
     private int tickDelayThreshold = 0;
 
     public static @Nullable CargoNet getNetworkFromLocation(@Nonnull Location l) {
@@ -151,25 +151,27 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
                 display();
             }
 
-            Slimefun.runSync(() -> {
-                if (blockData.isPendingRemove()) {
-                    return;
-                }
-                var event = new CargoTickEvent(inputs, outputs);
-                Bukkit.getPluginManager().callEvent(event);
-                event.getHologramMsg().ifPresent(msg -> updateHologram(b, msg));
-                if (event.isCancelled()) {
-                    return;
-                }
+            com.molean.folia.adapter.Folia.runSync(
+                    () -> {
+                        if (blockData.isPendingRemove()) {
+                            return;
+                        }
+                        var event = new CargoTickEvent(inputs, outputs);
+                        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
+                        event.getHologramMsg().ifPresent(msg -> updateHologram(b, msg));
+                        if (event.isCancelled()) {
+                            return;
+                        }
 
-                Slimefun.getProfiler().scheduleEntries(inputs.size() + 1);
-                new CargoNetworkTask(this, inputs, outputs).run();
-            });
+                        Slimefun.getProfiler().scheduleEntries(inputs.size() + 1);
+                        new CargoNetworkTask(this, inputs, outputs).run();
+                    },
+                    b.getLocation());
         }
     }
 
     private @Nonnull Map<Location, Integer> mapInputNodes() {
-        Map<Location, Integer> inputs = new HashMap<>();
+        Map<Location, Integer> inputs = java.util.Collections.synchronizedMap(new HashMap<>());
 
         for (Location node : inputNodes) {
             int frequency = getFrequency(node);
@@ -183,7 +185,7 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
     }
 
     private @Nonnull Map<Integer, List<Location>> mapOutputNodes() {
-        Map<Integer, List<Location>> output = new HashMap<>();
+        Map<Integer, List<Location>> output = java.util.Collections.synchronizedMap(new HashMap<>());
 
         List<Location> list = new LinkedList<>();
         int lastFrequency = -1;

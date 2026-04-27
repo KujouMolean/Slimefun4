@@ -28,7 +28,7 @@ import org.bukkit.block.Block;
  * {@link com.xzavier0722.mc.plugin.slimefun4.storage.controller.BlockDataController#getBlockData}
  */
 public class StorageCacheUtils {
-    private static final Set<ADataContainer> loadingData = new CopyOnWriteArraySet<>();
+    private static final Set<ADataContainer> loadingData = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     @ParametersAreNonnullByDefault
     public static boolean hasSlimefunBlock(Location l) {
@@ -42,9 +42,11 @@ public class StorageCacheUtils {
 
     @ParametersAreNonnullByDefault
     public static boolean hasUniversalBlock(Location l) {
-        var uniDataByNBT = TaskUtil.runSyncMethod(() -> Slimefun.getBlockDataService()
-                .getUniversalDataUUID(l.getBlock())
-                .isPresent());
+        var uniDataByNBT = TaskUtil.runSyncMethod(
+                () -> Slimefun.getBlockDataService()
+                        .getUniversalDataUUID(l.getBlock())
+                        .isPresent(),
+                com.molean.folia.adapter.SchedulerContext.of(l));
 
         if (uniDataByNBT) {
             return true;
@@ -328,15 +330,17 @@ public class StorageCacheUtils {
         Slimefun.getDatabaseManager().getBlockDataController().move(data, to);
     }
 
-    public static void executeAfterLoad(ASlimefunDataContainer data, Runnable execute, boolean runOnMainThread) {
+    public static void executeAfterLoad(
+            ASlimefunDataContainer data, Runnable execute, com.molean.folia.adapter.SchedulerContext schedulerContext) {
         if (data instanceof SlimefunBlockData blockData) {
-            executeAfterLoad(blockData, execute, runOnMainThread);
+            executeAfterLoad(blockData, execute, schedulerContext);
         } else if (data instanceof SlimefunUniversalData universalData) {
-            executeAfterLoad(universalData, execute, runOnMainThread);
+            executeAfterLoad(universalData, execute, schedulerContext);
         }
     }
 
-    public static void executeAfterLoad(SlimefunBlockData data, Runnable execute, boolean runOnMainThread) {
+    public static void executeAfterLoad(
+            SlimefunBlockData data, Runnable execute, com.molean.folia.adapter.SchedulerContext context) {
         if (data.isDataLoaded()) {
             execute.run();
             return;
@@ -344,8 +348,8 @@ public class StorageCacheUtils {
 
         Slimefun.getDatabaseManager().getBlockDataController().loadBlockDataAsync(data, new IAsyncReadCallback<>() {
             @Override
-            public boolean runOnMainThread() {
-                return runOnMainThread;
+            public com.molean.folia.adapter.SchedulerContext getContext() {
+                return context;
             }
 
             @Override
@@ -355,7 +359,8 @@ public class StorageCacheUtils {
         });
     }
 
-    public static void executeAfterLoad(SlimefunUniversalData data, Runnable execute, boolean runOnMainThread) {
+    public static void executeAfterLoad(
+            SlimefunUniversalData data, Runnable execute, com.molean.folia.adapter.SchedulerContext context) {
         if (data.isDataLoaded()) {
             execute.run();
             return;
@@ -363,8 +368,8 @@ public class StorageCacheUtils {
 
         Slimefun.getDatabaseManager().getBlockDataController().loadUniversalDataAsync(data, new IAsyncReadCallback<>() {
             @Override
-            public boolean runOnMainThread() {
-                return runOnMainThread;
+            public com.molean.folia.adapter.SchedulerContext getContext() {
+                return context;
             }
 
             @Override

@@ -60,7 +60,7 @@ public class PlayerResearchTask implements Consumer<PlayerProfile> {
             }
 
             if (!isInstant) {
-                Slimefun.runSync(
+                com.molean.folia.adapter.Folia.runSync(
                         () -> {
                             SoundEffect.PLAYER_RESEARCHING_SOUND.playFor(p);
                             Slimefun.getLocalization()
@@ -71,15 +71,16 @@ public class PlayerResearchTask implements Consumer<PlayerProfile> {
                                             msg -> msg.replace(PLACEHOLDER, research.getName(p))
                                                     .replace("%progress%", "0%"));
                         },
+                        p,
                         5L);
             }
 
             ResearchUnlockEvent event = new ResearchUnlockEvent(p, research);
-            Bukkit.getPluginManager().callEvent(event);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
             if (!event.isCancelled()) {
                 if (isInstant) {
-                    Slimefun.runSync(() -> unlockResearch(p, profile));
+                    com.molean.folia.adapter.Folia.runSync(() -> unlockResearch(p, profile), p);
                 } else if (Slimefun.getRegistry()
                         .getCurrentlyResearchingPlayers()
                         .add(p.getUniqueId())) {
@@ -91,13 +92,14 @@ public class PlayerResearchTask implements Consumer<PlayerProfile> {
                                     msg -> msg.replace(PLACEHOLDER, research.getName(p)));
                     sendUpdateMessage(p);
 
-                    Slimefun.runSync(
+                    com.molean.folia.adapter.Folia.runSync(
                             () -> {
                                 unlockResearch(p, profile);
                                 Slimefun.getRegistry()
                                         .getCurrentlyResearchingPlayers()
                                         .remove(p.getUniqueId());
                             },
+                            p,
                             (RESEARCH_PROGRESS.length + 1) * 20L);
                 }
             }
@@ -108,7 +110,7 @@ public class PlayerResearchTask implements Consumer<PlayerProfile> {
         for (int i = 1; i < RESEARCH_PROGRESS.length + 1; i++) {
             int index = i;
 
-            Slimefun.runSync(
+            com.molean.folia.adapter.Folia.runSync(
                     () -> {
                         SoundEffect.PLAYER_RESEARCHING_SOUND.playFor(p);
 
@@ -117,6 +119,7 @@ public class PlayerResearchTask implements Consumer<PlayerProfile> {
                             return msg.replace(PLACEHOLDER, research.getName(p)).replace("%progress%", progress);
                         });
                     },
+                    p,
                     i * 20L);
         }
     }

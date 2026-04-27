@@ -65,8 +65,8 @@ public class AutoEnchanter extends AbstractEnchantmentMachine {
             }
 
             // Call an event so other Plugins can modify it.
-            AutoEnchantEvent event = new AutoEnchantEvent(item, menu.getBlock());
-            Bukkit.getPluginManager().callEvent(event);
+            AutoEnchantEvent event = new AutoEnchantEvent(item);
+            com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
             if (event.isCancelled()) {
                 if (Slimefun.getItemStackService()
@@ -95,14 +95,14 @@ public class AutoEnchanter extends AbstractEnchantmentMachine {
     protected MachineRecipe enchant(BlockMenu menu, ItemStack target, ItemStack enchantedBook) {
         // Call an event so other Plugins can modify it.
         AsyncAutoEnchanterProcessEvent event = new AsyncAutoEnchanterProcessEvent(target, enchantedBook, menu);
-        Bukkit.getPluginManager().callEvent(event);
+        com.molean.folia.adapter.Folia.getPluginManager().ce(event);
 
         if (event.isCancelled()) {
             return null;
         }
 
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) enchantedBook.getItemMeta();
-        Map<Enchantment, Integer> enchantments = new HashMap<>();
+        Map<Enchantment, Integer> enchantments = java.util.Collections.synchronizedMap(new HashMap<>());
 
         if (!isEnchantmentCountAllowed(meta.getStoredEnchants().size())) {
             showEnchantmentLimitWarning(menu);

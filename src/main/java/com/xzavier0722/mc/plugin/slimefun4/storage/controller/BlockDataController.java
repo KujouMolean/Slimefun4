@@ -128,14 +128,6 @@ public class BlockDataController extends ADataController {
             case LOAD_WITH_CHUNK -> loadLoadedChunks();
             case LOAD_ON_STARTUP -> loadLoadedWorlds();
         }
-
-        com.molean.folia.adapter.Folia.getScheduler()
-                .runTaskLaterAsync(
-                        Slimefun.instance(),
-                        () -> {
-                            loadUniversalRecord();
-                        },
-                        1);
     }
 
     /**
@@ -850,18 +842,50 @@ public class BlockDataController extends ADataController {
             var lKey = block.get(FieldKey.LOCATION);
             var sfId = block.get(FieldKey.SLIMEFUN_ID);
             var sfItem = SlimefunItem.getById(sfId);
-            if (sfItem == null) {
-                return;
-            }
 
             var cache = getBlockDataFromCache(chunkData.getKey(), lKey);
             var blockData = cache == null ? new SlimefunBlockData(LocationUtils.toLocation(lKey), sfId) : cache;
             chunkData.addBlockCacheInternal(blockData, false);
 
-            if (sfItem.loadDataByDefault()) {
+            if (sfItem == null || sfItem.loadDataByDefault()) {
                 scheduleReadTask(() -> loadBlockData(blockData));
             }
         });
+
+        // 为已加载通用方块数据但 ticker 未启用的方块（如机器人）启用 ticker
+        // 解决重启后世界可能未加载时 ticker 丢失的问题
+        var cwName = chunk.getWorld().getName();
+        for (var entry : loadedUniversalData.entrySet()) {
+            var uniData = entry.getValue();
+            if (!(uniData instanceof SlimefunUniversalBlockData ubd)
+                    || !ubd.isDataLoaded()
+                    || !ubd.hasTrait(UniversalDataTrait.BLOCK)) {
+                continue;
+            }
+            var locStr = ubd.getData(UniversalDataTrait.BLOCK.getReservedKey());
+            if (locStr == null) {
+                continue;
+            }
+            int semi = locStr.indexOf(';');
+            if (!cwName.equals(locStr.substring(0, semi))) {
+                continue;
+            }
+            int c1 = locStr.indexOf(':', semi + 1);
+            int c2 = locStr.indexOf(':', c1 + 1);
+            int bx = Integer.parseInt(locStr.substring(semi + 1, c1));
+            int bz = Integer.parseInt(locStr.substring(c2 + 1));
+            if (bx >> 4 != chunk.getX() || bz >> 4 != chunk.getZ()) {
+                continue;
+            }
+            var sfItem = SlimefunItem.getById(ubd.getSfId());
+            if (sfItem != null && sfItem.isTicking()) {
+                Slimefun.getTickerTask()
+                        .enableTicker(
+                                new Location(chunk.getWorld(), bx,
+                                        Integer.parseInt(locStr.substring(c1 + 1, c2)), bz),
+                                ubd.getUUID());
+            }
+        }
 
         com.molean.folia.adapter.Folia.getPluginManager().ce(new SlimefunChunkDataLoadEvent(chunkData));
     }
@@ -902,11 +926,6 @@ public class BlockDataController extends ADataController {
 
         uniRecord.forEach(data -> {
             var sfId = data.get(FieldKey.SLIMEFUN_ID);
-            var sfItem = SlimefunItem.getById(sfId);
-
-            if (sfItem == null) {
-                return;
-            }
 
             var uuid = data.getUUID(FieldKey.UNIVERSAL_UUID);
             var traitsData = data.get(FieldKey.UNIVERSAL_TRAITS);
@@ -1094,16 +1113,9 @@ public class BlockDataController extends ADataController {
 
             if (uniData instanceof SlimefunUniversalBlockData ubd) {
                 if (ubd.hasTrait(UniversalDataTrait.BLOCK)) {
-                    // 初始化 上次出现位置
-                    var lStr = ubd.getData(UniversalDataTrait.BLOCK.getReservedKey());
-
-                    if (lStr != null && !lStr.isBlank()) {
-                        ubd.setLastPresent(LocationUtils.toLocation(lStr));
-                    }
-
                     var sfItem = SlimefunItem.getById(ubd.getSfId());
 
-                    if (sfItem != null && sfItem.isTicking() && ubd.getLastPresent() != null) {
+                    if (ubd.getLastPresent() != null && sfItem != null && sfItem.isTicking()) {
                         Slimefun.getTickerTask()
                                 .enableTicker(ubd.getLastPresent().toLocation(), ubd.getUUID());
                     }

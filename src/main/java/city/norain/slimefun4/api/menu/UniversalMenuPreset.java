@@ -56,7 +56,7 @@ public abstract class UniversalMenuPreset extends BlockMenuPreset {
 
         Block b = null;
 
-        if (lastPresent != null) {
+        if (lastPresent != null && lastPresent.getWorld() != null) {
             b = lastPresent.getBlock();
         }
 

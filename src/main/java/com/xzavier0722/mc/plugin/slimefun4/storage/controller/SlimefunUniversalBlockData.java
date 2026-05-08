@@ -62,7 +62,11 @@ public class SlimefunUniversalBlockData extends SlimefunUniversalData {
         }
 
         try {
-            lastPresent = new BlockPosition(LocationUtils.toLocation(data));
+            var loc = LocationUtils.toLocation(data);
+            if (loc.getWorld() == null) {
+                return null;
+            }
+            lastPresent = new BlockPosition(loc);
         } catch (RuntimeException e) {
             if (data.isEmpty()) {
                 return null;

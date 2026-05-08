@@ -374,6 +374,15 @@ public final class Slimefun extends JavaPlugin implements SlimefunAddon, ICompat
         logger.log(Level.INFO, "加载物品...");
         loadItems();
 
+        logger.log(Level.INFO, "加载通用方块数据...");
+        com.molean.folia.adapter.Folia.getScheduler()
+                .runTaskLaterAsynchronously(
+                        this,
+                        () -> {
+                            databaseManager.getBlockDataController().loadUniversalRecord();
+                        },
+                        1);
+
         logger.log(Level.INFO, "加载研究项目...");
         loadResearches();
 

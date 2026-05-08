@@ -220,7 +220,26 @@ public class StorageCacheUtils {
      */
     @ParametersAreNonnullByDefault
     @Nullable public static SlimefunUniversalBlockData getUniversalBlock(Block block) {
-        return getUniversalBlock(block.getLocation());
+        var byLocation = getUniversalBlock(block.getLocation());
+        if (byLocation != null) {
+            return byLocation;
+        }
+
+        var uuidOpt = io.github.thebusybiscuit.slimefun4.implementation.Slimefun.getBlockDataService()
+                .getUniversalDataUUID(block);
+        if (uuidOpt.isPresent()) {
+            var ubd = getUniversalBlock(uuidOpt.get(), block.getLocation());
+            if (ubd != null) {
+                var sfItem = SlimefunItem.getById(ubd.getSfId());
+                if (sfItem != null && sfItem.isTicking()) {
+                    io.github.thebusybiscuit.slimefun4.implementation.Slimefun.getTickerTask()
+                            .enableTicker(block.getLocation(), ubd.getUUID());
+                }
+            }
+            return ubd;
+        }
+
+        return null;
     }
 
     /**
@@ -263,8 +282,9 @@ public class StorageCacheUtils {
             return getBlock(block.getLocation()).isPendingRemove();
         }
 
-        if (hasUniversalBlock(block.getLocation())) {
-            return getUniversalBlock(block).isPendingRemove();
+        var uniData = getUniversalBlock(block);
+        if (uniData != null) {
+            return uniData.isPendingRemove();
         }
 
         return false;

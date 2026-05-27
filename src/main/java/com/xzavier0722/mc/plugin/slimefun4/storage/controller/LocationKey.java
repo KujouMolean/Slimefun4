@@ -23,11 +23,6 @@ public class LocationKey extends ScopeKey {
         return obj == this
                 || (obj instanceof LocationKey other
                         && scope == other.scope
-                        && location.getWorld()
-                                .getName()
-                                .equals(other.location.getWorld().getName())
-                        && location.getBlockX() == other.location.getBlockX()
-                        && location.getBlockY() == other.location.getBlockY()
-                        && location.getBlockZ() == other.location.getBlockZ());
+                        && LocationUtils.isSameLoc(location, other.location));
     }
 }

@@ -316,7 +316,7 @@ public class BlockDataController extends ADataController {
 
         var data = new RecordSet();
         data.put(FieldKey.LOCATION, lKey);
-        data.put(FieldKey.CHUNK, LocationUtils.getChunkKey(l.getChunk()));
+        data.put(FieldKey.CHUNK, LocationUtils.getChunkKey(l));
         data.put(FieldKey.SLIMEFUN_ID, sfId);
 
         var scopeKey = new LocationKey(DataScope.NONE, l);
@@ -713,7 +713,7 @@ public class BlockDataController extends ADataController {
 
             var newBlockData = new SlimefunBlockData(target, blockData);
             var key = new RecordKey(DataScope.BLOCK_RECORD);
-            if (LocationUtils.isSameChunk(blockData.getLocation().getChunk(), target.getChunk())) {
+            if (LocationUtils.isSameChunk(blockData.getLocation(), target)) {
                 if (chunkData == null) {
                     chunkData = getChunkDataCache(chunk, true);
                 }

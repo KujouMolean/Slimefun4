@@ -39,13 +39,15 @@ public class LocationUtils {
         }
 
         try {
-            var strArr = lKey.split(";");
-            var loc = strArr[1].split(":");
+            int semicolon = lKey.indexOf(';');
+            int colon1 = lKey.indexOf(':', semicolon + 1);
+            int colon2 = lKey.indexOf(':', colon1 + 1);
+
             return new Location(
-                    Bukkit.getWorld(strArr[0]),
-                    Double.parseDouble(loc[0]),
-                    Double.parseDouble(loc[1]),
-                    Double.parseDouble(loc[2]));
+                    Bukkit.getWorld(lKey.substring(0, semicolon)),
+                    Integer.parseInt(lKey.substring(semicolon + 1, colon1)),
+                    Integer.parseInt(lKey.substring(colon1 + 1, colon2)),
+                    Integer.parseInt(lKey.substring(colon2 + 1)));
         } catch (Exception e) {
             throw new RuntimeException("Unable to parse location [" + lKey + "]", e);
         }
@@ -56,25 +58,35 @@ public class LocationUtils {
                 || (isSameWorld(c1.getWorld(), c2.getWorld()) && c1.getX() == c2.getX() && c1.getZ() == c2.getZ());
     }
 
+    public static boolean isSameChunk(Location l1, Location l2) {
+        return l1 == l2
+                || (isSameWorld(l1.getWorld(), l2.getWorld())
+                        && (l1.getBlockX() >> 4) == (l2.getBlockX() >> 4)
+                        && (l1.getBlockZ() >> 4) == (l2.getBlockZ() >> 4));
+    }
+
     public static boolean isSameLoc(Location l1, Location l2) {
         return l1 == l2
-                || (isSameChunk(l1.getChunk(), l2.getChunk())
+                || (isSameWorld(l1.getWorld(), l2.getWorld())
                         && l1.getBlockX() == l2.getBlockX()
                         && l1.getBlockY() == l2.getBlockY()
                         && l1.getBlockZ() == l2.getBlockZ());
     }
 
     public static Chunk toChunk(World w, String cKey) {
-        var loc = cKey.split(";")[1].split(":");
+        int semicolon = cKey.indexOf(';');
+        int colon = cKey.indexOf(':', semicolon + 1);
+        int chunkX = Integer.parseInt(cKey.substring(semicolon + 1, colon));
+        int chunkZ = Integer.parseInt(cKey.substring(colon + 1));
         if (SlimefunExtended.isAtLeast(1, 19, 4)) {
-            return w.getChunkAt(Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), false);
+            return w.getChunkAt(chunkX, chunkZ, false);
         } else {
-            return w.getChunkAt(Integer.parseInt(loc[0]), Integer.parseInt(loc[1]));
+            return w.getChunkAt(chunkX, chunkZ);
         }
     }
 
     public static boolean isSameWorld(World w1, World w2) {
-        return w1.getName().equals(w2.getName());
+        return w1 == w2 || w1.getUID().equals(w2.getUID());
     }
 
     /**

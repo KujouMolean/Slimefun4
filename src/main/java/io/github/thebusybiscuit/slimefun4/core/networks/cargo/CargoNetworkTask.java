@@ -62,6 +62,8 @@ class CargoNetworkTask implements Runnable {
     @Override
     public void run() {
         long timestamp = System.nanoTime();
+        Map<Location, Integer> cooldowns = network.inputCooldowns;
+        int cooldownTicks = 100;
 
         try {
             /**
@@ -72,9 +74,24 @@ class CargoNetworkTask implements Runnable {
             for (Map.Entry<Location, Integer> entry : inputs.entrySet()) {
                 long nodeTimestamp = System.nanoTime();
                 Location input = entry.getKey();
+
+                // Check if this input node is on cooldown
+                Integer cd = cooldowns.get(input);
+                if (cd != null) {
+                    if (cd > 1) {
+                        cooldowns.put(input, cd - 1);
+                        continue;
+                    }
+                    cooldowns.remove(input);
+                }
+
                 Optional<Block> attachedBlock = network.getAttachedBlock(input);
 
-                attachedBlock.ifPresent(block -> routeItems(input, block, entry.getValue(), outputs));
+                attachedBlock.ifPresent(block -> {
+                    if (routeItems(input, block, entry.getValue(), outputs)) {
+                        cooldowns.put(input, cooldownTicks);
+                    }
+                });
 
                 // This will prevent this timings from showing up for the Cargo Manager
                 timestamp += Slimefun.getProfiler().closeEntry(entry.getKey(), inputNode, nodeTimestamp);
@@ -93,16 +110,17 @@ class CargoNetworkTask implements Runnable {
     }
 
     @ParametersAreNonnullByDefault
-    private void routeItems(
+    private boolean routeItems(
             Location inputNode, Block inputTarget, int frequency, Map<Integer, List<Location>> outputNodes) {
         ItemStackAndInteger slot = CargoUtils.withdraw(network, inventories, inputNode.getBlock(), inputTarget);
 
         if (slot == null) {
-            return;
+            return false;
         }
 
         ItemStack stack = slot.getItem();
         int previousSlot = slot.getInt();
+        int originalAmount = stack.getAmount();
         List<Location> destinations = outputNodes.get(frequency);
 
         if (destinations != null) {
@@ -111,7 +129,10 @@ class CargoNetworkTask implements Runnable {
 
         if (stack != null) {
             insertItem(inputTarget, previousSlot, stack);
+            return stack.getAmount() == originalAmount;
         }
+
+        return false;
     }
 
     @ParametersAreNonnullByDefault
@@ -182,9 +203,8 @@ class CargoNetworkTask implements Runnable {
             Optional<Block> target = network.getAttachedBlock(output);
 
             if (target.isPresent()) {
-                ItemStackWrapper wrapper = ItemStackWrapper.wrap(item);
                 item = CargoUtils.insert(
-                        network, inventories, output.getBlock(), target.get(), smartFill, item, wrapper);
+                        network, inventories, output.getBlock(), target.get(), smartFill, item);
 
                 if (item == null) {
                     if (roundrobin) {

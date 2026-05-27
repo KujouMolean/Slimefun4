@@ -46,6 +46,7 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
     private final Set<Location> outputNodes = new java.util.concurrent.CopyOnWriteArraySet<>();
 
     protected final Map<Location, Integer> roundRobin = java.util.Collections.synchronizedMap(new HashMap<>());
+    final Map<Location, Integer> inputCooldowns = new java.util.concurrent.ConcurrentHashMap<>();
     private int tickDelayThreshold = 0;
 
     public static @Nullable CargoNet getNetworkFromLocation(@Nonnull Location l) {
@@ -109,6 +110,7 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
         if (from == NetworkComponent.TERMINUS) {
             inputNodes.remove(l);
             outputNodes.remove(l);
+            inputCooldowns.remove(l);
         }
 
         if (to == NetworkComponent.TERMINUS) {

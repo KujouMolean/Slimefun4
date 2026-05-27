@@ -53,6 +53,20 @@ class ItemFilter implements Predicate<ItemStack> {
     private boolean checkLore;
 
     /**
+     * A set of {@link Material Materials} for which at least one filter item
+     * has no distinguishing meta characteristics. When an incoming item also
+     * has no {@link org.bukkit.inventory.meta.ItemMeta}, a material match alone determines the result.
+     */
+    private final java.util.Set<Material> simpleMaterials = new java.util.HashSet<>(9);
+
+    /**
+     * A cache for {@link #test(ItemStack)} results keyed by {@link Material}.
+     * Only used when {@link #checkLore} is {@code false} and the incoming item
+     * has no {@link org.bukkit.inventory.meta.ItemMeta}.
+     */
+    private final java.util.Map<Material, Boolean> noMetaCache = new java.util.HashMap<>();
+
+    /**
      * If an {@link ItemFilter} is marked as dirty / outdated, then it will be updated
      * on the next tick.
      */
@@ -150,6 +164,24 @@ class ItemFilter implements Predicate<ItemStack> {
             }
         }
 
+        // Populate the simple-materials fast-path set
+        this.simpleMaterials.clear();
+        if (!this.checkLore) {
+            for (ItemStackWrapper wrapper : this.items) {
+                if (!wrapper.hasItemMeta()) {
+                    this.simpleMaterials.add(wrapper.getType());
+                } else {
+                    org.bukkit.inventory.meta.ItemMeta meta = wrapper.getItemMeta();
+                    if (!meta.hasDisplayName()
+                            && !meta.hasCustomModelData()
+                            && !meta.hasEnchants()
+                            && Slimefun.getItemDataService().getItemData(meta).isEmpty()) {
+                        this.simpleMaterials.add(wrapper.getType());
+                    }
+                }
+            }
+        }
+
         this.dirty = false;
     }
 
@@ -161,6 +193,8 @@ class ItemFilter implements Predicate<ItemStack> {
      */
     private void clear(boolean rejectOnMatch) {
         this.items.clear();
+        this.simpleMaterials.clear();
+        this.noMetaCache.clear();
         this.checkLore = false;
         this.rejectOnMatch = rejectOnMatch;
     }
@@ -179,6 +213,7 @@ class ItemFilter implements Predicate<ItemStack> {
      */
     public void markDirty() {
         this.dirty = true;
+        this.noMetaCache.clear();
     }
 
     @Override
@@ -187,7 +222,9 @@ class ItemFilter implements Predicate<ItemStack> {
             return false;
         }
 
-        Debug.log(TestCase.CARGO_INPUT_TESTING, "ItemFilter#test({})", item);
+        if (Debug.hasTestCase(TestCase.CARGO_INPUT_TESTING)) {
+            Debug.log(TestCase.CARGO_INPUT_TESTING, "ItemFilter#test({})", item);
+        }
         /*
          * An empty Filter does not need to be iterated over.
          * We can just return our default value in this scenario.
@@ -213,31 +250,66 @@ class ItemFilter implements Predicate<ItemStack> {
 
         if (potentialMatches == 0) {
             // If there is no match, we can safely assume the default value
-            return rejectOnMatch;
-        } else {
-            /*
-             * If there is more than one potential match, create a wrapper to save
-             * performance on the ItemMeta otherwise just use the item directly.
-             */
-            ItemStack subject = potentialMatches == 1 ? item : ItemStackWrapper.wrap(item);
+            boolean result = rejectOnMatch;
+            cacheIfApplicable(item, result);
+            return result;
+        }
 
-            /*
-             * If there is only one match, we won't need to create a Wrapper
-             * and thus only perform .getItemMeta() once
-             */
-            for (ItemStackWrapper stack : items) {
-                if (SlimefunUtils.isItemSimilar(subject, stack, checkLore, false)) {
-                    /*
-                     * The filter has found a match, we can return the opposite
-                     * of our default value. If we exclude items, this is where we
-                     * would return false. Otherwise, we return true.
-                     */
-                    return !rejectOnMatch;
-                }
+        /*
+         * Simple-materials fast path:
+         * If checkLore is false and the incoming item has no ItemMeta,
+         * check the noMetaCache first, then the simpleMaterials set.
+         */
+        if (!checkLore && !item.hasItemMeta()) {
+            Boolean cached = noMetaCache.get(item.getType());
+            if (cached != null) {
+                return cached;
             }
 
-            // If no particular item was matched, we fallback to our default value.
-            return rejectOnMatch;
+            if (simpleMaterials.contains(item.getType())) {
+                boolean result = !rejectOnMatch;
+                noMetaCache.put(item.getType(), result);
+                return result;
+            }
+        }
+
+        /*
+         * If there is more than one potential match, create a wrapper to save
+         * performance on the ItemMeta otherwise just use the item directly.
+         */
+        ItemStack subject = potentialMatches == 1 ? item : ItemStackWrapper.wrap(item);
+
+        /*
+         * If there is only one match, we won't need to create a Wrapper
+         * and thus only perform .getItemMeta() once
+         */
+        for (ItemStackWrapper stack : items) {
+            if (SlimefunUtils.isItemSimilar(subject, stack, checkLore, false)) {
+                /*
+                 * The filter has found a match, we can return the opposite
+                 * of our default value. If we exclude items, this is where we
+                 * would return false. Otherwise, we return true.
+                 */
+                boolean result = !rejectOnMatch;
+                cacheIfApplicable(item, result);
+                return result;
+            }
+        }
+
+        // If no particular item was matched, we fallback to our default value.
+        boolean result = rejectOnMatch;
+        cacheIfApplicable(item, result);
+        return result;
+    }
+
+    /**
+     * Caches the result of {@link #test(ItemStack)} by {@link Material} when
+     * the {@link #checkLore} flag is {@code false} and the incoming item has
+     * no {@link org.bukkit.inventory.meta.ItemMeta}.
+     */
+    private void cacheIfApplicable(@Nonnull ItemStack item, boolean result) {
+        if (!checkLore && !item.hasItemMeta()) {
+            noMetaCache.put(item.getType(), result);
         }
     }
 }

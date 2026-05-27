@@ -271,12 +271,13 @@ final class CargoUtils {
             Block node,
             Block target,
             boolean smartFill,
-            ItemStack stack,
-            ItemStackWrapper wrapper) {
-        Debug.log(TestCase.CARGO_INPUT_TESTING, "CargoUtils#insert");
+            ItemStack stack) {
+//        Debug.log(TestCase.CARGO_INPUT_TESTING, "CargoUtils#insert");
         if (!matchesFilter(network, node, stack)) {
             return stack;
         }
+
+        ItemStackWrapper wrapper = ItemStackWrapper.wrap(stack);
 
         DirtyChestMenu menu = getChestMenu(target);
 
@@ -295,7 +296,7 @@ final class CargoUtils {
                 var event = new CargoInsertEvent(node, target, inventory);
                 com.molean.folia.adapter.Folia.getPluginManager().ce(event);
                 if (!event.isCancelled()) {
-                    return insertIntoVanillaInventory(stack, wrapper, smartFill, inventory);
+                    return insertIntoVanillaInventory(stack, smartFill, inventory);
                 }
             }
 
@@ -308,6 +309,10 @@ final class CargoUtils {
             return stack;
         }
 
+        int invMaxStackSize = menu.toInventory().getMaxStackSize();
+        int stackMax = Slimefun.getItemStackService()
+                .getMaxStackSize(stack, InventoryContext.CARGO_INSERT, stack.getMaxStackSize());
+
         for (int slot : menu.getPreset().getSlotsAccessedByItemTransport(menu, ItemTransportFlow.INSERT, wrapper)) {
             ItemStack itemInSlot = menu.getItemInSlot(slot);
 
@@ -316,10 +321,7 @@ final class CargoUtils {
                     continue;
                 }
 
-                int maxStackSize = Math.min(
-                        Slimefun.getItemStackService()
-                                .getMaxStackSize(stack, InventoryContext.CARGO_INSERT, stack.getMaxStackSize()),
-                        menu.toInventory().getMaxStackSize());
+                int maxStackSize = Math.min(stackMax, invMaxStackSize);
                 if (stack.getAmount() > maxStackSize) {
                     ItemStack inserted = stack.clone();
                     inserted.setAmount(maxStackSize);
@@ -338,7 +340,7 @@ final class CargoUtils {
                                     itemInSlot,
                                     InventoryContext.CARGO_INSERT,
                                     itemInSlot.getType().getMaxStackSize()),
-                    menu.toInventory().getMaxStackSize());
+                    invMaxStackSize);
             int currentAmount = itemInSlot.getAmount();
 
             if (!smartFill && currentAmount == maxStackSize) {
@@ -352,8 +354,9 @@ final class CargoUtils {
                 continue;
             }
 
-            if ((comparison == ComparisonResult.MATCH)
-                    || SlimefunUtils.isItemSimilarWithoutVirtualItems(itemInSlot, wrapper, true, false)) {
+            if (comparison == ComparisonResult.MATCH
+                    || (itemInSlot.getType() == stack.getType()
+                            && SlimefunUtils.isItemSimilarWithoutVirtualItems(itemInSlot, wrapper, true, false))) {
                 if (currentAmount < maxStackSize) {
                     int amount = currentAmount + stack.getAmount();
 
@@ -376,7 +379,7 @@ final class CargoUtils {
     }
 
     @Nullable private static ItemStack insertIntoVanillaInventory(
-            @Nonnull ItemStack stack, @Nonnull ItemStackWrapper wrapper, boolean smartFill, @Nonnull Inventory inv) {
+            @Nonnull ItemStack stack, boolean smartFill, @Nonnull Inventory inv) {
         /*
          * If the Inventory does not accept this Item Type, bounce the item back.
          * Example: Shulker boxes within shulker boxes (fixes #2662)
@@ -385,10 +388,16 @@ final class CargoUtils {
             return stack;
         }
 
+        ItemStackWrapper wrapper = ItemStackWrapper.wrap(stack);
+
         ItemStack[] contents = inv.getContents();
         int[] range = getInputSlotRange(inv, stack);
         int minSlot = range[0];
         int maxSlot = range[1];
+
+        int invMaxStackSize = inv.getMaxStackSize();
+        int stackMax = Slimefun.getItemStackService()
+                .getMaxStackSize(stack, InventoryContext.CARGO_INSERT, stack.getMaxStackSize());
 
         for (int slot = minSlot; slot < maxSlot; slot++) {
             // Changes to this ItemStack are synchronized with the Item in the Inventory
@@ -399,10 +408,7 @@ final class CargoUtils {
                     continue;
                 }
 
-                int maxStackSize = Math.min(
-                        Slimefun.getItemStackService()
-                                .getMaxStackSize(stack, InventoryContext.CARGO_INSERT, stack.getMaxStackSize()),
-                        inv.getMaxStackSize());
+                int maxStackSize = Math.min(stackMax, invMaxStackSize);
                 if (stack.getAmount() > maxStackSize) {
                     ItemStack inserted = stack.clone();
                     inserted.setAmount(maxStackSize);
@@ -421,7 +427,7 @@ final class CargoUtils {
                                         itemInSlot,
                                         InventoryContext.CARGO_INSERT,
                                         itemInSlot.getType().getMaxStackSize()),
-                        inv.getMaxStackSize());
+                        invMaxStackSize);
 
                 if (!smartFill && currentAmount == maxStackSize) {
                     // Skip full stacks - Performance optimization for non-smartfill nodes
@@ -434,8 +440,9 @@ final class CargoUtils {
                     continue;
                 }
 
-                if ((comparison == ComparisonResult.MATCH)
-                        || SlimefunUtils.isItemSimilarWithoutVirtualItems(itemInSlot, wrapper, true, false)) {
+                if (comparison == ComparisonResult.MATCH
+                        || (itemInSlot.getType() == stack.getType()
+                                && SlimefunUtils.isItemSimilarWithoutVirtualItems(itemInSlot, wrapper, true, false))) {
                     if (currentAmount < maxStackSize) {
                         int amount = currentAmount + stack.getAmount();
 

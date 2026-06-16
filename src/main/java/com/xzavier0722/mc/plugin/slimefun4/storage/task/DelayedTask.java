@@ -37,7 +37,7 @@ public class DelayedTask {
         return executed;
     }
 
-    public void runUnsafely() {
+    public synchronized void runUnsafely() {
         try {
             executed = true;
             task.run();

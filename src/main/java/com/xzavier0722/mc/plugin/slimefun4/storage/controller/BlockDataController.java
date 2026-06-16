@@ -183,9 +183,21 @@ public class BlockDataController extends ADataController {
                 .runTaskTimerAsynchronously(
                         p,
                         new DelayedSavingLooperTask(
-                                forceSavePeriod, () -> new HashMap<>(delayedWriteTasks), delayedWriteTasks::remove),
+                                forceSavePeriod, this::getDelayedWriteTaskSnapshot, this::removeDelayedWriteTask),
                         20,
                         20);
+    }
+
+    private Map<LinkedKey, DelayedTask> getDelayedWriteTaskSnapshot() {
+        synchronized (delayedWriteTasks) {
+            return new HashMap<>(delayedWriteTasks);
+        }
+    }
+
+    private void removeDelayedWriteTask(LinkedKey key, DelayedTask task) {
+        synchronized (delayedWriteTasks) {
+            delayedWriteTasks.remove(key, task);
+        }
     }
 
     public boolean isDelayedSavingEnabled() {

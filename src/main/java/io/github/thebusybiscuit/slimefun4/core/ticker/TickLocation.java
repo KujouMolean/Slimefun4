@@ -27,4 +27,22 @@ public class TickLocation {
     public Location getLocation() {
         return position.toLocation();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof TickLocation other)) {
+            return false;
+        }
+
+        return position.equals(other.position) && java.util.Objects.equals(uuid, other.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(position, uuid);
+    }
 }

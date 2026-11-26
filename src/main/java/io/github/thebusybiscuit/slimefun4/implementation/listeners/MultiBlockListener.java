@@ -1,5 +1,6 @@
 package io.github.thebusybiscuit.slimefun4.implementation.listeners;
 
+import com.molean.isletopia.paper.island.IslandManager;
 import io.github.thebusybiscuit.slimefun4.api.events.MultiBlockInteractEvent;
 import io.github.thebusybiscuit.slimefun4.core.handlers.MultiBlockInteractionHandler;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlock;
@@ -43,8 +44,14 @@ public class MultiBlockListener implements Listener {
             return;
         }
 
-        Player p = e.getPlayer();
         Block b = e.getClickedBlock();
+        if (b == null
+                || !IslandManager.INSTANCE.flagEnabled(
+                        b.getWorld(), com.molean.isletopia.paper.island.flag.external.Slimefun.class)) {
+            return;
+        }
+
+        Player p = e.getPlayer();
         LinkedList<MultiBlock> multiblocks = new LinkedList<>();
 
         for (MultiBlock mb : Slimefun.getRegistry().getMultiBlocks()) {
